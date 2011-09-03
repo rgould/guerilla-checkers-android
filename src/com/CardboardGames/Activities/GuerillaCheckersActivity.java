@@ -1,4 +1,6 @@
-package com.CardboardGames;
+package com.CardboardGames.Activities;
+
+import com.CardboardGames.Views.BoardView;
 
 import android.app.Activity;
 import android.os.Bundle;
