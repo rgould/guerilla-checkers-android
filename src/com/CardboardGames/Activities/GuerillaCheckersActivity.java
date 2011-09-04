@@ -35,6 +35,9 @@ public class GuerillaCheckersActivity
 		if (!(view instanceof BoardView))
 			return false;
 		
+		if (event.getActionMasked() != MotionEvent.ACTION_DOWN)
+			return false;
+		
 		BoardView board_view = (BoardView)view;
 		float screenx = event.getRawX();
 		float screeny = event.getRawY();
@@ -46,7 +49,6 @@ public class GuerillaCheckersActivity
 			view.invalidate();
 		
 		setTitle(board_coords.toString());
-		
 		return true;
 	}
 	

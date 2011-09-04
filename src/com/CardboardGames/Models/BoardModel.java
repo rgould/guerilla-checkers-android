@@ -62,11 +62,20 @@ public class BoardModel {
 	}
 	
 	public List<Piece> getGuerillaPieces() {
-		return Collections.unmodifiableList(m_coinPieces);
+		return Collections.unmodifiableList(m_guerillaPieces);
+	}
+	
+	public boolean hasSelectedPiece() {
+		return m_selectedPiece != null;
 	}
 	
 	public void addTouch(Point point) {
-		m_selectedPiece = getCoinPieceAt(point);
+		if (hasSelectedPiece() && isValidMove(m_selectedPiece, point)) {
+			m_selectedPiece.setPosition(point);
+			m_selectedPiece = null;
+		} else {
+			m_selectedPiece = getCoinPieceAt(point);
+		}
 	}
 	
 	/// PRIVATE METHODS

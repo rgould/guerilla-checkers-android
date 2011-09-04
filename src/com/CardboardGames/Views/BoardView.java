@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -198,17 +197,19 @@ public class BoardView extends View {
 	/// @{
 	/// Board Properties
 	private final int BORDER_SIZE_PX = 10;
-	
 	private final double COIN_PIECE_TO_SQUARE_RATIO = 0.9;
 	private final double GUERILLA_PIECE_TO_SQUARE_RATIO = 0.4;
+	/// @}
 	
-	private final int BORDER_CLR = Color.BLUE;
-	private final int COIN_PIECE_CLR = Color.DKGRAY;
-	private final int SELECTED_COIN_PIECE_CLR = Color.MAGENTA;
-	private final int POTENTIAL_COIN_MOVE_CLR = // ARGB 32 bit
-		(SELECTED_COIN_PIECE_CLR & 0x00FFFFFF) | 0x33000000;
-	private final int GUERILLA_PIECE_CLR = Color.GREEN;
-	private final int WHITE_CLR = Color.RED;
-	private final int BLACK_CLR = Color.WHITE;
+	/// @{
+	/// Board Colours (32 bit ARGB format)
+	private final int BORDER_CLR              = 0xFFA66000;
+	private final int COIN_PIECE_CLR          = 0xFF7B9E00;
+	private final int SELECTED_COIN_PIECE_CLR = 0xFF00AA72;
+	private final int POTENTIAL_COIN_MOVE_CLR = // set alpha directly
+		(SELECTED_COIN_PIECE_CLR & 0x00FFFFFF) | 0x66000000;
+	private final int GUERILLA_PIECE_CLR      = 0xFF222222;
+	private final int WHITE_CLR               = 0xFF9B7D27;
+	private final int BLACK_CLR               = 0xFFC1A657;
 	/// @}
 }
