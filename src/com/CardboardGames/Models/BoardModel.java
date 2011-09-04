@@ -88,14 +88,6 @@ public class BoardModel {
 		return getGuerillaPieceAt(new Point(x, y));
 	}
 
-	public void addCoinPiece(Piece piece) {
-		m_coinPieces.add(piece);
-	}
-
-	public void addGuerillaPiece(Piece piece) {
-		m_guerillaPieces.add(piece);
-	}
-
 	public List<Piece> getCoinPieces() {
 		return Collections.unmodifiableList(m_coinPieces);
 	}
@@ -136,8 +128,18 @@ public class BoardModel {
 	}
 
 	public void placeGuerillaPiece(final Point point) {
-		Piece piece = new Piece(false, point);
+		Piece piece = new Piece(point);
 		m_guerillaPieces.add(piece);
+		int x = point.x;
+		int y = point.y;
+		if (coinPieceWouldBeCapturedAt(x, y))
+			captureCoinPieceAt(x, y);
+		if (coinPieceWouldBeCapturedAt(x, y+1))
+			captureCoinPieceAt(x, y+1);
+		if (coinPieceWouldBeCapturedAt(x+1, y))
+			captureCoinPieceAt(x+1, y);
+		if (coinPieceWouldBeCapturedAt(x+1, y+1))
+			captureCoinPieceAt(x+1, y+1);
 	}
 
 	public boolean hasSelectedPiece() {
@@ -147,6 +149,21 @@ public class BoardModel {
 	public boolean selectCoinPieceAt(Point point) {
 		m_selectedCoinPiece = getCoinPieceAt(point);
 		return m_selectedCoinPiece != null;
+	}
+
+	public boolean captureCoinPieceAt(Point point) {
+		int num_pieces = m_coinPieces.size();
+		for (int idx = 0; idx < num_pieces; ++idx) {
+			if (m_coinPieces.get(idx).getPosition().equals(point)) {
+				m_coinPieces.remove(idx);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean captureCoinPieceAt(int x, int y) {
+		return captureCoinPieceAt(new Point(x, y));
 	}
 
 	public boolean captureGuerillaPiece(Point coin_from, Point coin_to) {
@@ -183,27 +200,23 @@ public class BoardModel {
 	/// PRIVATE METHODS
 
 	private void initPieces() {
-		m_coinPieces.add(new Piece(false, new Point(3,2)));
-		m_coinPieces.add(new Piece(false, new Point(2,3)));
-		m_coinPieces.add(new Piece(false, new Point(4,3)));
-		m_coinPieces.add(new Piece(false, new Point(3,4)));
-		m_coinPieces.add(new Piece(false, new Point(5,4)));
-		m_coinPieces.add(new Piece(false, new Point(4,5)));
+		m_coinPieces.add(new Piece(new Point(3,2)));
+		m_coinPieces.add(new Piece(new Point(2,3)));
+		m_coinPieces.add(new Piece(new Point(4,3)));
+		m_coinPieces.add(new Piece(new Point(3,4)));
+		m_coinPieces.add(new Piece(new Point(5,4)));
+		m_coinPieces.add(new Piece(new Point(4,5)));
 	}
 
 	/// PRIVATE TYPES
 
 	public class Piece {
-		private boolean captured = false;
 		private Point position = new Point(0,0);
 
-		public Piece(boolean captured, Point position) {
-			this.setCaptured(captured);
+		public Piece(Point position) {
 			this.setPosition(position);
 		}
 
-		public boolean isCaptured() { return captured; }
-		public void setCaptured(boolean captured) { this.captured = captured; }
 		public Point getPosition() { return position; }
 		public void setPosition(Point position) { this.position = position; }
 	}
