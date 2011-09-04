@@ -22,24 +22,13 @@ public class GameController
 				m_model.moveSelectedCoinPiece(board_coords);
 				m_model.deselectCoinPiece();
 				m_view.invalidate();
-				m_state = GameState.GUERILLA_TURN;
+				moveToNextState();
 				return;
 			}
 		}
 
 		if (m_model.selectCoinPieceAt(board_coords))
 			m_view.invalidate();
-	}
-
-	public void handleGuerillaSetupInput(float screenx, float screeny) {
-		Point board_coords = m_view.getGuerillaBoardCoords(screenx, screeny);
-		if (!m_model.isValidGuerillaSetupPlacement(board_coords))
-			return;
-
-		m_model.placeGuerillaPiece(board_coords);
-		m_view.invalidate();
-		if (m_model.getNumGuerillaPieces() > 1)
-			m_state = GameState.COIN_TURN;
 	}
 
 	public void handleGuerillaInput(float screenx, float screeny) {
@@ -49,42 +38,61 @@ public class GameController
 
 		m_model.placeGuerillaPiece(board_coords);
 		m_view.invalidate();
+		moveToNextState();
+	}
 
-		m_state = GameState.COIN_TURN;
+	public void moveToNextState() {
+		switch (m_state) {
+		case GUERILLA_SETUP_FIRST:
+			m_state = GameState.GUERILLA_SETUP_SECOND;
+			return;
+		case GUERILLA_SETUP_SECOND:
+			m_state = GameState.COIN_MOVE;
+			return;
+		case COIN_MOVE:
+			m_state = GameState.GUERILLA_MOVE_FIRST;
+			return;
+		case GUERILLA_MOVE_FIRST:
+			m_state = GameState.GUERILLA_MOVE_SECOND;
+			return;
+		case GUERILLA_MOVE_SECOND:
+			m_state = GameState.COIN_MOVE;
+			return;
+		case END_GAME:
+			break;
+		}
 	}
 
 	public void addTouch(float screenx, float screeny) {
 		switch (m_state) {
-		case GUERILLA_SETUP:
-			handleGuerillaSetupInput(screenx, screeny);
-			break;
-		case GUERILLA_TURN:
+		case GUERILLA_SETUP_FIRST:
+		case GUERILLA_SETUP_SECOND:
+		case GUERILLA_MOVE_FIRST:
+		case GUERILLA_MOVE_SECOND:
 			handleGuerillaInput(screenx, screeny);
 			break;
-		case COIN_TURN:
+		case COIN_MOVE:
 			handleCoinInput(screenx, screeny);
 			break;
 		case END_GAME:
 			break;
-		default:
-			assert(false);
-			break;
 		}
-
 	}
 
 	/// PRIVATE TYPES
 
 	enum GameState {
-		GUERILLA_SETUP,
-		COIN_TURN,
-		GUERILLA_TURN,
+		GUERILLA_SETUP_FIRST,
+		GUERILLA_SETUP_SECOND,
+		COIN_MOVE,
+		GUERILLA_MOVE_FIRST,
+		GUERILLA_MOVE_SECOND,
 		END_GAME
 	}
 
 	/// PRIVATE MEMBERS
 
-	GameState m_state = GameState.GUERILLA_SETUP;
+	GameState m_state = GameState.GUERILLA_SETUP_FIRST;
 	BoardModel m_model = null;
 	BoardView m_view = null;
 }

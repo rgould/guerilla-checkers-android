@@ -97,34 +97,27 @@ public class BoardModel {
 		return m_guerillaPieces.size();
 	}
 
-	public boolean isValidGuerillaPlacement(final Point point) {
+	private boolean isValidGuerillaPlacement(Point point, boolean is_first) {
 		if (point.x < 0 || point.x >= COLS - 1)
 			return false;
 		if (point.y < 0 || point.y >= ROWS - 1)
 			return false;
 		if (getGuerillaPieceAt(point) != null)
 			return false;
+		if (is_first)
+			return true;
+		if (getGuerillaPieceAt(point.x + 1, point.y) == null &&
+			getGuerillaPieceAt(point.x - 1, point.y) == null &&
+			getGuerillaPieceAt(point.x, point.y + 1) == null &&
+			getGuerillaPieceAt(point.x, point.y - 1) == null) {
+			return false;
+		}
 		return true;
 	}
 
-	public boolean isValidGuerillaSetupPlacement(final Point point) {
-		if (!isValidGuerillaPlacement(point))
-			return false;
-		if (getNumGuerillaPieces() == 0)
-			return true;
-		if (getNumGuerillaPieces() != 1)
-			return false;
-
-		List<Piece> pieces = getGuerillaPieces();
-		assert(pieces.size() == 1);
-		Piece piece = pieces.get(0);
-		Point piece_pos = piece.getPosition();
-
-		int xdiff = Math.abs(point.x - piece_pos.x);
-		int ydiff = Math.abs(point.y - piece_pos.y);
-		if (xdiff == 0 && ydiff == 1 || xdiff == 1 && ydiff == 0)
-			return true;
-		return false;
+	public boolean isValidGuerillaPlacement(final Point point) {
+		boolean is_first = getNumGuerillaPieces() == 0;
+		return isValidGuerillaPlacement(point, is_first);
 	}
 
 	public void placeGuerillaPiece(final Point point) {
