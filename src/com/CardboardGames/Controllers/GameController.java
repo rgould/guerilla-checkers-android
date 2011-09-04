@@ -14,11 +14,11 @@ public class GameController
 		m_view = view;
 	}
 
-	public void handleCoinInput(float screenx, float screeny) {
-		Point board_coords = m_view.getCoinBoardCoords(screenx, screeny);
+	public void handleCoinInput(float viewx, float viewy) {
+		Point board_coords = m_view.getCoinBoardCoords(viewx, viewy);
+		BoardModel.Piece old_piece = m_model.getSelectedCoinPiece();
 		if (m_model.hasSelectedCoinPiece()) {
-			BoardModel.Piece piece = m_model.getSelectedCoinPiece();
-			if (m_model.isValidMove(piece, board_coords)) {
+			if (m_model.isValidCoinMove(old_piece, board_coords)) {
 				m_model.moveSelectedCoinPiece(board_coords);
 				m_model.deselectCoinPiece();
 				m_view.invalidate();
@@ -27,12 +27,13 @@ public class GameController
 			}
 		}
 
-		if (m_model.selectCoinPieceAt(board_coords))
+		m_model.selectCoinPieceAt(board_coords);
+		if (old_piece != m_model.getSelectedCoinPiece())
 			m_view.invalidate();
 	}
 
-	public void handleGuerillaInput(float screenx, float screeny) {
-		Point board_coords = m_view.getGuerillaBoardCoords(screenx, screeny);
+	public void handleGuerillaInput(float viewx, float viewy) {
+		Point board_coords = m_view.getGuerillaBoardCoords(viewx, viewy);
 		if (!m_model.isValidGuerillaPlacement(board_coords))
 			return;
 
@@ -63,16 +64,16 @@ public class GameController
 		}
 	}
 
-	public void addTouch(float screenx, float screeny) {
+	public void addTouch(float viewx, float viewy) {
 		switch (m_state) {
 		case GUERILLA_SETUP_FIRST:
 		case GUERILLA_SETUP_SECOND:
 		case GUERILLA_MOVE_FIRST:
 		case GUERILLA_MOVE_SECOND:
-			handleGuerillaInput(screenx, screeny);
+			handleGuerillaInput(viewx, viewy);
 			break;
 		case COIN_MOVE:
-			handleCoinInput(screenx, screeny);
+			handleCoinInput(viewx, viewy);
 			break;
 		case END_GAME:
 			break;

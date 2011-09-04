@@ -46,19 +46,19 @@ public class BoardView extends View
 		return (int)((double)getBoardSize() / m_model.COLS);
 	}
 
-	public Point getCoinBoardCoords(float screenx, float screeny) {
+	public Point getCoinBoardCoords(float viewx, float viewy) {
 		float rect_size = getRectSize();
-		Point board_pos = getBoardScreenPosition();
+		Point board_pos = getBoardPosition();
 		int xoffset = board_pos.x + BORDER_SIZE_PX;
 		int yoffset = board_pos.y + BORDER_SIZE_PX;
-		double xcoord = Math.floor((screenx - xoffset) / rect_size);
-		double ycoord = Math.floor((screeny - yoffset) / rect_size);
+		double xcoord = Math.floor((viewx - xoffset) / rect_size);
+		double ycoord = Math.floor((viewy - yoffset) / rect_size);
 		return new Point((int)xcoord, (int)ycoord);
 	}
 
-	public Point getGuerillaBoardCoords(float screenx, float screeny) {
+	public Point getGuerillaBoardCoords(float viewx, float viewy) {
 		float half_rect = 0.5f * getRectSize();
-		return getCoinBoardCoords(screenx - half_rect, screeny - half_rect);
+		return getCoinBoardCoords(viewx - half_rect, viewy - half_rect);
 	}
 
 	private int getBoardSizeInclBorder() {
@@ -67,15 +67,6 @@ public class BoardView extends View
 
 	private int getBoardSize() {
 		return getBoardSizeInclBorder() - 2*BORDER_SIZE_PX;
-	}
-
-	private Point getBoardScreenPosition() {
-		int screen_pos[] = new int[2];
-		getLocationOnScreen(screen_pos);
-		Point board_pos = getBoardPosition();
-		board_pos.x += screen_pos[0];
-		board_pos.y += screen_pos[1];
-		return board_pos;
 	}
 
 	private Point getBoardPosition() {
@@ -206,7 +197,7 @@ public class BoardView extends View
 		int bg_color = setAlpha(SELECTED_COIN_PIECE_CLR, alpha);
 		for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
 			for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
-				if (!m_model.isValidMove(piece, idx_col, idx_row))
+				if (!m_model.isValidCoinMove(piece, idx_col, idx_row))
 					continue;
 				Rect r = getRect(idx_row, idx_col, board_pos, board_size);
 				Point center = new Point(r.centerX(), r.centerY());

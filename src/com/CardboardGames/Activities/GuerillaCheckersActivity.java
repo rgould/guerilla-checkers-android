@@ -28,20 +28,13 @@ public class GuerillaCheckersActivity
 		m_view = new BoardView(this, m_model);
 		m_view.setOnTouchListener(this);
 		setContentView(m_view);
-
 		m_controller = new GameController(m_model, m_view);
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
-		if (!(view instanceof BoardView))
-			return false;
-
-		if (event.getActionMasked() != MotionEvent.ACTION_DOWN)
-			return false;
-
-		float screenx = event.getRawX();
-		float screeny = event.getRawY();
-		m_controller.addTouch(screenx, screeny);
+		float viewx = event.getX();
+		float viewy = event.getY();
+		m_controller.addTouch(viewx, viewy);
 		return true;
 	}
 

@@ -26,7 +26,23 @@ public class BoardModel {
 		return m_selectedCoinPiece;
 	}
 
-	public boolean isValidMove(Piece piece, int x, int y) {
+	private boolean hasGuerillaPieceOrBoardEdge(int x, int y) {
+		if (x < 0 || y < 0 || x >= COLS-1 || y >= ROWS-1)
+			return true;
+		return getGuerillaPieceAt(x, y) != null;
+	}
+
+	public boolean coinPieceWouldBeCapturedAt(int x, int y) {
+		if (hasGuerillaPieceOrBoardEdge(x-1, y-1) &&
+			hasGuerillaPieceOrBoardEdge(x-1, y) &&
+			hasGuerillaPieceOrBoardEdge(x, y-1) &&
+			hasGuerillaPieceOrBoardEdge(x, y)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isValidCoinMove(Piece piece, int x, int y) {
 		if (x < 0 || x >= COLS)
 			return false;
 		if (y < 0 || y >= ROWS)
@@ -41,12 +57,14 @@ public class BoardModel {
 		if (getCoinPieceAt(x, y) != null)
 			return false;
 
-		return true;
+		if (coinPieceWouldBeCapturedAt(x, y))
+			return false;
 
+		return true;
 	}
 
-	public boolean isValidMove(Piece piece, Point pos) {
-		return isValidMove(piece, pos.x, pos.y);
+	public boolean isValidCoinMove(Piece piece, Point pos) {
+		return isValidCoinMove(piece, pos.x, pos.y);
 	}
 
 	private Piece getPieceAt(final Point point, List<Piece> pieces) {
@@ -137,7 +155,7 @@ public class BoardModel {
 	public boolean moveSelectedCoinPiece(Point point) {
 		if (m_selectedCoinPiece == null)
 			return false;
-		if (!isValidMove(m_selectedCoinPiece, point))
+		if (!isValidCoinMove(m_selectedCoinPiece, point))
 			return false;
 		m_selectedCoinPiece.setPosition(point);
 		return true;
