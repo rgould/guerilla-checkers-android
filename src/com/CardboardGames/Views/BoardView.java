@@ -46,7 +46,7 @@ public class BoardView extends View
 		return (int)((double)getBoardSize() / m_model.COLS);
 	}
 
-	public Point getBoardCoords(final float screenx, final float screeny) {
+	public Point getCoinBoardCoords(float screenx, float screeny) {
 		float rect_size = getRectSize();
 		Point board_pos = getBoardScreenPosition();
 		int xoffset = board_pos.x + BORDER_SIZE_PX;
@@ -54,6 +54,11 @@ public class BoardView extends View
 		int xcoord = (int)((screenx - xoffset) / rect_size);
 		int ycoord = (int)((screeny - yoffset) / rect_size);
 		return new Point(xcoord, ycoord);
+	}
+
+	public Point getGuerillaBoardCoords(float screenx, float screeny) {
+		float half_rect = 0.5f * getRectSize();
+		return getCoinBoardCoords(screenx - half_rect, screeny - half_rect);
 	}
 
 	private int getBoardSizeInclBorder() {
@@ -155,13 +160,13 @@ public class BoardView extends View
 	}
 
 	private int getCoinPieceFGColor(BoardModel.Piece piece) {
-		return piece == m_model.getSelectedPiece() ?
+		return piece == m_model.getSelectedCoinPiece() ?
 			SELECTED_COIN_PIECE_SECONDARY_CLR :
 			COIN_PIECE_SECONDARY_CLR;
 	}
 
 	private int getCoinPieceBGColor(BoardModel.Piece piece) {
-		return piece == m_model.getSelectedPiece() ?
+		return piece == m_model.getSelectedCoinPiece() ?
 			SELECTED_COIN_PIECE_CLR :
 			COIN_PIECE_CLR;
 	}
@@ -189,7 +194,7 @@ public class BoardView extends View
 	}
 
 	private void drawPotentialMoves(Canvas canvas) {
-		BoardModel.Piece piece = m_model.getSelectedPiece();
+		BoardModel.Piece piece = m_model.getSelectedCoinPiece();
 		if (piece == null)
 			return;
 
@@ -232,7 +237,7 @@ public class BoardView extends View
 	private void drawPieces(Canvas canvas) {
 		drawCoinPieces(canvas, m_model.getCoinPieces());
 		drawGuerillaPieces(canvas, m_model.getGuerillaPieces());
-		if (m_model.getSelectedPiece() != null)
+		if (m_model.hasSelectedCoinPiece())
 			drawPotentialMoves(canvas);
 	}
 
