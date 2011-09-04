@@ -51,9 +51,9 @@ public class BoardView extends View
 		Point board_pos = getBoardScreenPosition();
 		int xoffset = board_pos.x + BORDER_SIZE_PX;
 		int yoffset = board_pos.y + BORDER_SIZE_PX;
-		int xcoord = (int)((screenx - xoffset) / rect_size);
-		int ycoord = (int)((screeny - yoffset) / rect_size);
-		return new Point(xcoord, ycoord);
+		double xcoord = Math.floor((screenx - xoffset) / rect_size);
+		double ycoord = Math.floor((screeny - yoffset) / rect_size);
+		return new Point((int)xcoord, (int)ycoord);
 	}
 
 	public Point getGuerillaBoardCoords(float screenx, float screeny) {
