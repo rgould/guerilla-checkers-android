@@ -10,11 +10,10 @@ import android.view.View.OnTouchListener;
 import com.CardboardGames.Models.BoardModel;
 import com.CardboardGames.Views.BoardView;
 
-public class GuerillaCheckersActivity 
-	extends Activity 
+public class GuerillaCheckersActivity
+	extends Activity
 	implements OnTouchListener
 {
-
 	/// PUBLIC METHODS
 
 	public GuerillaCheckersActivity() {

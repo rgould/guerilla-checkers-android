@@ -11,8 +11,8 @@ import android.view.View;
 
 import com.CardboardGames.Models.BoardModel;
 
-public class BoardView extends View {
-
+public class BoardView extends View
+{
 	/// PUBLIC METHODS
 
 	public BoardView(Context ctx, BoardModel model) {
@@ -95,7 +95,7 @@ public class BoardView extends View {
 		m_paint.setColor(BLACK_CLR);
 		canvas.drawRect(
 			board_pos.x + BORDER_SIZE_PX,
-			board_pos.y + BORDER_SIZE_PX, 
+			board_pos.y + BORDER_SIZE_PX,
 			board_pos.x + BORDER_SIZE_PX + board_size_px,
 			board_pos.y + BORDER_SIZE_PX + board_size_px,
 			m_paint);
@@ -110,7 +110,7 @@ public class BoardView extends View {
 				canvas.drawRect(rect, m_paint);
 			}
 		}
-	}	
+	}
 
 	private void drawPiece(Canvas canvas, int cx, int cy, int radius) {
 		canvas.drawCircle(cx, cy, radius, m_paint);
@@ -128,7 +128,7 @@ public class BoardView extends View {
 
 	private void drawCoinPieces(
 		Canvas canvas,
-		List<BoardModel.Piece> pieces) 
+		List<BoardModel.Piece> pieces)
 	{
 		int board_size = getBoardSize();
 		Point board_pos = getBoardPosition();
@@ -167,7 +167,7 @@ public class BoardView extends View {
 
 	private void drawGuerillaPieces(
 		Canvas canvas,
-		List<BoardModel.Piece> pieces) 
+		List<BoardModel.Piece> pieces)
 	{
 		m_paint.setColor(GUERILLA_PIECE_CLR);
 		int board_size = getBoardSize();
@@ -189,7 +189,7 @@ public class BoardView extends View {
 
 	/// PRIVATE MEMBERS
 
-	private Paint m_paint = new Paint();
+	private final Paint m_paint = new Paint();
 
 	/// Board Model
 	private BoardModel m_model = new BoardModel();
