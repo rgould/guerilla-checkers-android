@@ -12,7 +12,7 @@ import android.view.View;
 import com.CardboardGames.Models.BoardModel;
 
 public class BoardView extends View {
-	
+
 	/// PUBLIC METHODS
 
 	public BoardView(Context ctx, BoardModel model) {
@@ -26,7 +26,7 @@ public class BoardView extends View {
 		drawBoard(canvas);
 		drawPieces(canvas);
 	}
-	
+
 	// PRIVATE METHODS
 
 	private Rect getRect(int row, int col, Point board_pos, int board_size) {
@@ -40,11 +40,11 @@ public class BoardView extends View {
 
 		return new Rect((int)left, (int)top, (int)right, (int)bottom);
 	}
-	
+
 	private int getRectSize() {
 		return (int)((double)getBoardSize() / m_model.COLS);
 	}
-	
+
 	public Point getBoardCoords(final float screenx, final float screeny) {
 		float rect_size = getRectSize();
 		Point board_pos = getBoardScreenPosition();
@@ -54,15 +54,15 @@ public class BoardView extends View {
 		int ycoord = (int)((screeny - yoffset) / rect_size);
 		return new Point(xcoord, ycoord);
 	}
-	
+
 	private int getBoardSizeInclBorder() {
 		return Math.min(getWidth(), getHeight());
 	}
-	
+
 	private int getBoardSize() {
 		return getBoardSizeInclBorder() - 2*BORDER_SIZE_PX;
 	}
-	
+
 	private Point getBoardScreenPosition() {
 		int screen_pos[] = new int[2];
 		getLocationOnScreen(screen_pos);
@@ -71,7 +71,7 @@ public class BoardView extends View {
 		board_pos.y += screen_pos[1];
 		return board_pos;
 	}
-	
+
 	private Point getBoardPosition() {
 		int board_size = getBoardSizeInclBorder();
 		int offsetx = (getWidth() - board_size) / 2;
@@ -105,27 +105,27 @@ public class BoardView extends View {
 			for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
 				if (m_model.isBlack(idx_row, idx_col))
 					continue;
-				
+
 				Rect rect = getRect(idx_row, idx_col, board_pos, board_size_px);
 				canvas.drawRect(rect, m_paint);
 			}
 		}
 	}	
-	
+
 	private void drawPiece(Canvas canvas, int cx, int cy, int radius) {
 		canvas.drawCircle(cx, cy, radius, m_paint);
 	}
-	
+
 	private int getCoinPieceRadius(int board_size) {
 		return (int)(0.5 * getRectSize() * COIN_PIECE_TO_SQUARE_RATIO);
 	}
-	
+
 	private int getCoinPieceColor(BoardModel.Piece piece) {
 		return piece == m_model.getSelectedPiece() ?
 			SELECTED_COIN_PIECE_CLR :
 			COIN_PIECE_CLR;
 	}
-	
+
 	private void drawCoinPieces(
 		Canvas canvas,
 		List<BoardModel.Piece> pieces) 
@@ -133,7 +133,7 @@ public class BoardView extends View {
 		int board_size = getBoardSize();
 		Point board_pos = getBoardPosition();
 		int radius = getCoinPieceRadius(board_size);
-		
+
 		for (BoardModel.Piece piece : pieces) {
 			m_paint.setColor(getCoinPieceColor(piece));
 			Point pos = piece.getPosition();
@@ -141,12 +141,12 @@ public class BoardView extends View {
 			drawPiece(canvas, r.centerX(), r.centerY(), radius);
 		}
 	}
-	
+
 	private void drawPotentialMoves(Canvas canvas) {
 		BoardModel.Piece piece = m_model.getSelectedPiece();
 		if (piece == null)
 			return;
-		
+
 		Point board_pos = getBoardPosition();
 		int board_size = getBoardSize();
 		int radius = getCoinPieceRadius(board_size);
@@ -160,11 +160,11 @@ public class BoardView extends View {
 			}
 		}
 	}
-	
+
 	private int getGuerillaPieceRadius(int board_size) {
 		return (int)(0.5 * getRectSize() * GUERILLA_PIECE_TO_SQUARE_RATIO);
 	}
-	
+
 	private void drawGuerillaPieces(
 		Canvas canvas,
 		List<BoardModel.Piece> pieces) 
@@ -179,7 +179,7 @@ public class BoardView extends View {
 			drawPiece(canvas, rect.right, rect.bottom, radius);
 		}
 	}
-	
+
 	private void drawPieces(Canvas canvas) {
 		drawCoinPieces(canvas, m_model.getCoinPieces());
 		drawGuerillaPieces(canvas, m_model.getGuerillaPieces());
@@ -190,7 +190,7 @@ public class BoardView extends View {
 	/// PRIVATE MEMBERS
 
 	private Paint m_paint = new Paint();
-	
+
 	/// Board Model
 	private BoardModel m_model = new BoardModel();
 
@@ -200,7 +200,7 @@ public class BoardView extends View {
 	private final double COIN_PIECE_TO_SQUARE_RATIO = 0.9;
 	private final double GUERILLA_PIECE_TO_SQUARE_RATIO = 0.4;
 	/// @}
-	
+
 	/// @{
 	/// Board Colours (32 bit ARGB format)
 	private final int BORDER_CLR              = 0xFFA66000;
