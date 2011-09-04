@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
@@ -112,7 +113,40 @@ public class BoardView extends View
 		}
 	}
 
-	private void drawPiece(Canvas canvas, int cx, int cy, int radius) {
+	private void drawStar(Canvas canvas, Point center, int radius) {
+		final int SEGMENTS = 10;
+		final double IN_OUT_RATIO = 0.4;
+		final double SEGMENT_ANGLE = 2 * Math.PI / SEGMENTS;
+		final double INITIAL_ROTATION = 0.5 * Math.PI;
+
+		Path star = new Path();
+		int initx = (int)(radius * Math.cos(INITIAL_ROTATION));
+		int inity = (int)(radius * Math.sin(INITIAL_ROTATION));
+		star.moveTo(center.x + initx, center.y - inity);
+		double theta = INITIAL_ROTATION;
+		for (int idx = 1; idx < 12; ++idx) {
+			theta += SEGMENT_ANGLE;
+			double radius_multiplier = (idx % 2 == 1) ? IN_OUT_RATIO : 1;
+			int r = (int)(radius * radius_multiplier);
+			int x = (int)(r * Math.cos(theta));
+			int y = (int)(r * Math.sin(theta));
+			star.lineTo(center.x + x, center.y - y);
+		}
+		canvas.drawPath(star, m_paint);
+	}
+
+	private void drawCoinPiece(
+		Canvas canvas, Point center, int fg_color, int bg_color, int radius)
+	{
+		m_paint.setColor(bg_color);
+		canvas.drawCircle(center.x, center.y, radius, m_paint);
+
+		m_paint.setColor(fg_color);
+		int star_radius = (int)(radius * COIN_FG_BG_RATIO);
+		drawStar(canvas, center, star_radius);
+	}
+
+	private void drawGuerillaPiece(Canvas canvas, int cx, int cy, int radius) {
 		canvas.drawCircle(cx, cy, radius, m_paint);
 	}
 
@@ -120,7 +154,13 @@ public class BoardView extends View
 		return (int)(0.5 * getRectSize() * COIN_PIECE_TO_SQUARE_RATIO);
 	}
 
-	private int getCoinPieceColor(BoardModel.Piece piece) {
+	private int getCoinPieceFGColor(BoardModel.Piece piece) {
+		return piece == m_model.getSelectedPiece() ?
+			SELECTED_COIN_PIECE_SECONDARY_CLR :
+			COIN_PIECE_SECONDARY_CLR;
+	}
+
+	private int getCoinPieceBGColor(BoardModel.Piece piece) {
 		return piece == m_model.getSelectedPiece() ?
 			SELECTED_COIN_PIECE_CLR :
 			COIN_PIECE_CLR;
@@ -135,11 +175,17 @@ public class BoardView extends View
 		int radius = getCoinPieceRadius(board_size);
 
 		for (BoardModel.Piece piece : pieces) {
-			m_paint.setColor(getCoinPieceColor(piece));
+			int fg_color = getCoinPieceFGColor(piece);
+			int bg_color = getCoinPieceBGColor(piece);
 			Point pos = piece.getPosition();
 			Rect r = getRect(pos.y, pos.x, board_pos, board_size);
-			drawPiece(canvas, r.centerX(), r.centerY(), radius);
+			Point center = new Point(r.centerX(), r.centerY());
+			drawCoinPiece(canvas, center, fg_color, bg_color, radius);
 		}
+	}
+
+	int setAlpha(int color, int alpha) {
+		return (color & 0x00FFFFFF) | (alpha << 24);
 	}
 
 	private void drawPotentialMoves(Canvas canvas) {
@@ -150,13 +196,16 @@ public class BoardView extends View
 		Point board_pos = getBoardPosition();
 		int board_size = getBoardSize();
 		int radius = getCoinPieceRadius(board_size);
-		m_paint.setColor(POTENTIAL_COIN_MOVE_CLR);
+		int alpha = 0x66;
+		int fg_color = setAlpha(SELECTED_COIN_PIECE_SECONDARY_CLR, alpha);
+		int bg_color = setAlpha(SELECTED_COIN_PIECE_CLR, alpha);
 		for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
 			for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
 				if (!m_model.isValidMove(piece, idx_col, idx_row))
 					continue;
 				Rect r = getRect(idx_row, idx_col, board_pos, board_size);
-				drawPiece(canvas, r.centerX(), r.centerY(), radius);
+				Point center = new Point(r.centerX(), r.centerY());
+				drawCoinPiece(canvas, center, fg_color, bg_color, radius);
 			}
 		}
 	}
@@ -176,7 +225,7 @@ public class BoardView extends View
 		for (BoardModel.Piece piece : pieces) {
 			Point pos = piece.getPosition();
 			Rect rect = getRect(pos.y, pos.x, board_pos, board_size);
-			drawPiece(canvas, rect.right, rect.bottom, radius);
+			drawGuerillaPiece(canvas, rect.right, rect.bottom, radius);
 		}
 	}
 
@@ -198,16 +247,17 @@ public class BoardView extends View
 	/// Board Properties
 	private final int BORDER_SIZE_PX = 10;
 	private final double COIN_PIECE_TO_SQUARE_RATIO = 0.9;
+	private final double COIN_FG_BG_RATIO = 0.7;
 	private final double GUERILLA_PIECE_TO_SQUARE_RATIO = 0.4;
 	/// @}
 
 	/// @{
 	/// Board Colours (32 bit ARGB format)
 	private final int BORDER_CLR              = 0xFFA66000;
-	private final int COIN_PIECE_CLR          = 0xFF7B9E00;
+	private final int COIN_PIECE_CLR          = 0xFF3B9E00;
+	private final int COIN_PIECE_SECONDARY_CLR = 0xFFAAAA00;
 	private final int SELECTED_COIN_PIECE_CLR = 0xFF00AA72;
-	private final int POTENTIAL_COIN_MOVE_CLR = // set alpha directly
-		(SELECTED_COIN_PIECE_CLR & 0x00FFFFFF) | 0x66000000;
+	private final int SELECTED_COIN_PIECE_SECONDARY_CLR = 0xFFBBBB00;
 	private final int GUERILLA_PIECE_CLR      = 0xFF222222;
 	private final int WHITE_CLR               = 0xFF9B7D27;
 	private final int BLACK_CLR               = 0xFFC1A657;
