@@ -22,6 +22,29 @@ public class BoardModel {
 		return m_selectedPiece;
 	}
 	
+	public boolean isValidMove(Piece piece, int x, int y) {
+		if (x < 0 || x >= COLS)
+			return false;
+		if (y < 0 || y >= ROWS)
+			return false;
+		
+		Point piece_pos = piece.getPosition();
+		int xdiff = Math.abs(x - piece_pos.x);
+		int ydiff = Math.abs(y - piece_pos.y);
+		if (xdiff != 1 || ydiff != 1)
+			return false;
+		
+		if (getCoinPieceAt(x, y) != null)
+			return false;
+		
+		return true;
+		
+	}
+	
+	public boolean isValidMove(Piece piece, Point pos) {
+		return isValidMove(piece, pos.x, pos.y);
+	}
+	
 	public Piece getCoinPieceAt(int x, int y) {
 		return getCoinPieceAt(new Point(x, y));
 	}

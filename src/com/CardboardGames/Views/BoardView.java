@@ -134,11 +134,31 @@ public class BoardView extends View {
 		int board_size = getBoardSize();
 		Point board_pos = getBoardPosition();
 		int radius = getCoinPieceRadius(board_size);
+		
 		for (BoardModel.Piece piece : pieces) {
 			m_paint.setColor(getCoinPieceColor(piece));
 			Point pos = piece.getPosition();
-			Rect rect = getRect(pos.y, pos.x, board_pos, board_size);
-			drawPiece(canvas, rect.centerX(), rect.centerY(), radius);
+			Rect r = getRect(pos.y, pos.x, board_pos, board_size);
+			drawPiece(canvas, r.centerX(), r.centerY(), radius);
+		}
+	}
+	
+	private void drawPotentialMoves(Canvas canvas) {
+		BoardModel.Piece piece = m_model.getSelectedPiece();
+		if (piece == null)
+			return;
+		
+		Point board_pos = getBoardPosition();
+		int board_size = getBoardSize();
+		int radius = getCoinPieceRadius(board_size);
+		m_paint.setColor(POTENTIAL_COIN_MOVE_CLR);
+		for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
+			for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
+				if (!m_model.isValidMove(piece, idx_col, idx_row))
+					continue;
+				Rect r = getRect(idx_row, idx_col, board_pos, board_size);
+				drawPiece(canvas, r.centerX(), r.centerY(), radius);
+			}
 		}
 	}
 	
@@ -163,9 +183,9 @@ public class BoardView extends View {
 	
 	private void drawPieces(Canvas canvas) {
 		drawCoinPieces(canvas, m_model.getCoinPieces());
-		
-		m_paint.setColor(GUERILLA_PIECE_CLR);
 		drawGuerillaPieces(canvas, m_model.getGuerillaPieces());
+		if (m_model.getSelectedPiece() != null)
+			drawPotentialMoves(canvas);
 	}
 
 	/// PRIVATE MEMBERS
@@ -185,6 +205,8 @@ public class BoardView extends View {
 	private final int BORDER_CLR = Color.BLUE;
 	private final int COIN_PIECE_CLR = Color.DKGRAY;
 	private final int SELECTED_COIN_PIECE_CLR = Color.MAGENTA;
+	private final int POTENTIAL_COIN_MOVE_CLR = // ARGB 32 bit
+		(SELECTED_COIN_PIECE_CLR & 0x00FFFFFF) | 0x33000000;
 	private final int GUERILLA_PIECE_CLR = Color.GREEN;
 	private final int WHITE_CLR = Color.RED;
 	private final int BLACK_CLR = Color.WHITE;
