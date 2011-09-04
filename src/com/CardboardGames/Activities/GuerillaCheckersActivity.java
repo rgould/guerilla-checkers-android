@@ -45,6 +45,8 @@ public class GuerillaCheckersActivity
 		if (m_model.getSelectedPiece() != old_selected_piece)
 			view.invalidate();
 		
+		setTitle(board_coords.toString());
+		
 		return true;
 	}
 	

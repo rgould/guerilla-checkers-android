@@ -30,50 +30,75 @@ public class BoardView extends View {
 	
 	// PRIVATE METHODS
 
-	private Rect getRect(int row, int col, int board_length) {
-		double rect_width = (double)board_length / m_model.COLS;
-		double rect_height = (double)board_length / m_model.ROWS;
+	private Rect getRect(int row, int col, Point board_pos, int board_size) {
+		double rect_width = (double)board_size / m_model.COLS;
+		double rect_height = (double)board_size / m_model.ROWS;
 
-		double top = BORDER_SIZE_PX + row * rect_height;
-		double left = BORDER_SIZE_PX + col * rect_width;
-		double bottom = top + rect_height;
+		double left = board_pos.x + BORDER_SIZE_PX + col * rect_width;
+		double top = board_pos.y + BORDER_SIZE_PX + row * rect_height;
 		double right = left + rect_width;
+		double bottom = top + rect_height;
 
-		return new Rect((int)top, (int)left, (int)bottom, (int)right);
+		return new Rect((int)left, (int)top, (int)right, (int)bottom);
+	}
+	
+	private int getRectSize() {
+		return (int)((double)getBoardSize() / m_model.COLS);
 	}
 	
 	public Point getBoardCoords(final float screenx, final float screeny) {
-		int screen_pos[] = new int[2];
-		getLocationOnScreen(screen_pos);
-		float square_size = getBoardSize() / m_model.ROWS;
-		int xoffset = BORDER_SIZE_PX + screen_pos[0];
-		int yoffset = BORDER_SIZE_PX + screen_pos[1];
-		int xcoord = (int)((screenx - xoffset) / square_size);
-		int ycoord = (int)((screeny - yoffset) / square_size);
+		float rect_size = getRectSize();
+		Point board_pos = getBoardScreenPosition();
+		int xoffset = board_pos.x + BORDER_SIZE_PX;
+		int yoffset = board_pos.y + BORDER_SIZE_PX;
+		int xcoord = (int)((screenx - xoffset) / rect_size);
+		int ycoord = (int)((screeny - yoffset) / rect_size);
 		return new Point(xcoord, ycoord);
 	}
 	
 	private int getBoardSizeInclBorder() {
-		return Math.min(super.getWidth(), super.getHeight());
+		return Math.min(getWidth(), getHeight());
 	}
 	
 	private int getBoardSize() {
 		return getBoardSizeInclBorder() - 2*BORDER_SIZE_PX;
 	}
+	
+	private Point getBoardScreenPosition() {
+		int screen_pos[] = new int[2];
+		getLocationOnScreen(screen_pos);
+		Point board_pos = getBoardPosition();
+		board_pos.x += screen_pos[0];
+		board_pos.y += screen_pos[1];
+		return board_pos;
+	}
+	
+	private Point getBoardPosition() {
+		int board_size = getBoardSizeInclBorder();
+		int offsetx = (getWidth() - board_size) / 2;
+		int offsety = (getHeight() - board_size) / 2;
+		return new Point(offsetx, offsety);
+	}
 
 	private void drawBoard(Canvas canvas) {
+		Point board_pos = getBoardPosition();
 		int board_size_incl_border = getBoardSizeInclBorder();
 		int board_size_px = getBoardSize();
 
 		m_paint.setColor(BORDER_CLR);
-		canvas.drawRect(0, 0, board_size_incl_border, board_size_incl_border, m_paint);
+		canvas.drawRect(
+			board_pos.x,
+			board_pos.y,
+			board_pos.x + board_size_incl_border,
+			board_pos.y + board_size_incl_border,
+			m_paint);
 
 		m_paint.setColor(BLACK_CLR);
 		canvas.drawRect(
-			BORDER_SIZE_PX,
-			BORDER_SIZE_PX, 
-			BORDER_SIZE_PX + board_size_px,
-			BORDER_SIZE_PX + board_size_px,
+			board_pos.x + BORDER_SIZE_PX,
+			board_pos.y + BORDER_SIZE_PX, 
+			board_pos.x + BORDER_SIZE_PX + board_size_px,
+			board_pos.y + BORDER_SIZE_PX + board_size_px,
 			m_paint);
 
 		m_paint.setColor(WHITE_CLR);
@@ -81,7 +106,9 @@ public class BoardView extends View {
 			for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
 				if (m_model.isBlack(idx_row, idx_col))
 					continue;
-				canvas.drawRect(getRect(idx_row, idx_col, board_size_px), m_paint);
+				
+				Rect rect = getRect(idx_row, idx_col, board_pos, board_size_px);
+				canvas.drawRect(rect, m_paint);
 			}
 		}
 	}	
@@ -91,9 +118,7 @@ public class BoardView extends View {
 	}
 	
 	private int getCoinPieceRadius(int board_size) {
-		return (int)(
-			0.5 * getRect(0, 0, board_size).width() 
-			* COIN_PIECE_TO_SQUARE_RATIO);
+		return (int)(0.5 * getRectSize() * COIN_PIECE_TO_SQUARE_RATIO);
 	}
 	
 	private int getCoinPieceColor(BoardModel.Piece piece) {
@@ -107,19 +132,18 @@ public class BoardView extends View {
 		List<BoardModel.Piece> pieces) 
 	{
 		int board_size = getBoardSize();
+		Point board_pos = getBoardPosition();
 		int radius = getCoinPieceRadius(board_size);
 		for (BoardModel.Piece piece : pieces) {
 			m_paint.setColor(getCoinPieceColor(piece));
 			Point pos = piece.getPosition();
-			Rect rect = getRect(pos.x, pos.y, board_size);
+			Rect rect = getRect(pos.y, pos.x, board_pos, board_size);
 			drawPiece(canvas, rect.centerX(), rect.centerY(), radius);
 		}
 	}
 	
 	private int getGuerillaPieceRadius(int board_size) {
-		return (int)(
-			0.5 * getRect(0, 0, board_size).width() 
-			* GUERILLA_PIECE_TO_SQUARE_RATIO);
+		return (int)(0.5 * getRectSize() * GUERILLA_PIECE_TO_SQUARE_RATIO);
 	}
 	
 	private void drawGuerillaPieces(
@@ -128,10 +152,11 @@ public class BoardView extends View {
 	{
 		m_paint.setColor(GUERILLA_PIECE_CLR);
 		int board_size = getBoardSize();
+		Point board_pos = getBoardPosition();
 		int radius = getGuerillaPieceRadius(board_size);
 		for (BoardModel.Piece piece : pieces) {
 			Point pos = piece.getPosition();
-			Rect rect = getRect(pos.x, pos.y, board_size);
+			Rect rect = getRect(pos.y, pos.x, board_pos, board_size);
 			drawPiece(canvas, rect.right, rect.bottom, radius);
 		}
 	}
