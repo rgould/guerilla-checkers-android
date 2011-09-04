@@ -14,17 +14,37 @@ public class BoardModel {
 		initPieces();
 	}
 	
+	public boolean isBlack(final int row, final int col) {
+		return row % 2 != col % 2;
+	}
+	
+	public Piece getSelectedPiece() {
+		return m_selectedPiece;
+	}
+	
+	public Piece getCoinPieceAt(int x, int y) {
+		return getCoinPieceAt(new Point(x, y));
+	}
+	
+	public Piece getCoinPieceAt(final Point point) {
+		for (Piece piece : m_coinPieces) {
+			if (piece.getPosition().equals(point))
+				return piece;
+		}
+		return null;
+	}
+	
 	public List<Piece> getCoinPieces() {
 		return Collections.unmodifiableList(m_coinPieces);
 	}
+	
 	public List<Piece> getGuerillaPieces() {
 		return Collections.unmodifiableList(m_coinPieces);
 	}
 	
-	public int getCoinGridWidth() { return COIN_GRID_WIDTH; }
-	public int getCoinGridHeight() { return COIN_GRID_HEIGHT; }
-	public int getGuerillaGridWidth() { return GUERILLA_GRID_WIDTH; }
-	public int getGuerillaGridHeight() { return GUERILLA_GRID_HEIGHT; }
+	public void addTouch(Point point) {
+		m_selectedPiece = getCoinPieceAt(point);
+	}
 	
 	/// PRIVATE METHODS
 	
@@ -73,6 +93,8 @@ public class BoardModel {
 	
 	/// PRIVATE MEMBERS
 	
+	Piece m_selectedPiece = null;
+	
 	/// @{
 	/// Pieces
 	private ArrayList<Piece> m_coinPieces = new ArrayList<Piece>();
@@ -81,9 +103,7 @@ public class BoardModel {
 
 	/// @{
 	/// Grid Dimensions
-	private final int COIN_GRID_WIDTH = 8;
-	private final int COIN_GRID_HEIGHT = 8;
-	private final int GUERILLA_GRID_WIDTH = 7;
-	private final int GUERILLA_GRID_HEIGHT = 7;
+	public final int ROWS = 8;
+	public final int COLS = 8;
 	/// @}
 }
