@@ -32,6 +32,9 @@ public class GuerillaCheckersActivity
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
+		if (event.getActionMasked() != MotionEvent.ACTION_DOWN)
+			return false;
+
 		float viewx = event.getX();
 		float viewy = event.getY();
 		m_controller.addTouch(viewx, viewy);

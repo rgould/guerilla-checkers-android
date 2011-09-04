@@ -57,9 +57,6 @@ public class BoardModel {
 		if (getCoinPieceAt(x, y) != null)
 			return false;
 
-		if (coinPieceWouldBeCapturedAt(x, y))
-			return false;
-
 		return true;
 	}
 
@@ -152,11 +149,29 @@ public class BoardModel {
 		return m_selectedCoinPiece != null;
 	}
 
+	public boolean captureGuerillaPiece(Point coin_from, Point coin_to) {
+		int guerilla_x = coin_from.x - (coin_to.x < coin_from.x ? 1 : 0);
+		int guerilla_y = coin_from.y - (coin_to.y < coin_from.y ? 1 : 0);
+		Point capture_point = new Point(guerilla_x, guerilla_y);
+
+		int num_pieces = m_guerillaPieces.size();
+		for (int idx = 0; idx < num_pieces; ++idx) {
+			if (m_guerillaPieces.get(idx).getPosition().equals(capture_point)) {
+				m_guerillaPieces.remove(idx);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean moveSelectedCoinPiece(Point point) {
 		if (m_selectedCoinPiece == null)
 			return false;
 		if (!isValidCoinMove(m_selectedCoinPiece, point))
 			return false;
+
+		Point piece_pos = m_selectedCoinPiece.getPosition();
+		captureGuerillaPiece(piece_pos, point);
 		m_selectedCoinPiece.setPosition(point);
 		return true;
 	}
