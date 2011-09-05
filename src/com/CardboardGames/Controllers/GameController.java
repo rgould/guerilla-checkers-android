@@ -43,6 +43,11 @@ public class GameController
 	}
 
 	public void moveToNextState() {
+		if (m_model.isGameOver()) {
+			m_state = GameState.END_GAME;
+			return;
+		}
+
 		switch (m_state) {
 		case GUERILLA_SETUP_FIRST:
 			m_state = GameState.GUERILLA_SETUP_SECOND;

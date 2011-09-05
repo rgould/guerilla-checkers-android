@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.TextView;
 
 import com.CardboardGames.Controllers.GameController;
 import com.CardboardGames.Models.BoardModel;
@@ -38,6 +39,12 @@ public class GuerillaCheckersActivity
 		float viewx = event.getX();
 		float viewy = event.getY();
 		m_controller.addTouch(viewx, viewy);
+
+		if (m_model.isGameOver()) {
+			TextView tv = new TextView(this);
+			tv.setText("GAME OVER!");
+			setContentView(tv);
+		}
 		return true;
 	}
 

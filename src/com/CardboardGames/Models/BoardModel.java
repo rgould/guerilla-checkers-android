@@ -127,6 +127,14 @@ public class BoardModel {
 		return isValidGuerillaPlacement(point, is_first);
 	}
 
+	public boolean isGameOver() {
+		if (m_guerillaPieces.size() == 0)
+			return true;
+		if (m_coinPieces.size() == 0)
+			return true;
+		return false;
+	}
+
 	public void placeGuerillaPiece(final Point point) {
 		Piece piece = new Piece(point);
 		m_guerillaPieces.add(piece);
