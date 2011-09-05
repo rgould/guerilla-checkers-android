@@ -108,6 +108,10 @@ public class BoardModel {
 		return m_guerillaPieces.size();
 	}
 
+	public int getRemainingGuerillaPieces() {
+		return m_numGuerillaPiecesLeft;
+	}
+
 	private boolean areGuerillaPiecesAdjacent(Point first, Point second) {
 		int xdiff = Math.abs(first.x - second.x);
 		int ydiff = Math.abs(first.y - second.y);
@@ -171,14 +175,12 @@ public class BoardModel {
 			return true;
 		if (m_coinPieces.size() == 0)
 			return true;
+		if (m_numGuerillaPiecesLeft <= 0)
+			return true;
 		return false;
 	}
 
-	public void placeGuerillaPiece(final Point point) {
-		Piece piece = new Piece(point);
-		m_guerillaPieces.add(piece);
-		int x = point.x;
-		int y = point.y;
+	private void captureCoinPiecesAroundGuerillaAt(int x, int y) {
 		if (coinPieceWouldBeCapturedAt(x, y))
 			captureCoinPieceAt(x, y);
 		if (coinPieceWouldBeCapturedAt(x, y+1))
@@ -187,6 +189,14 @@ public class BoardModel {
 			captureCoinPieceAt(x+1, y);
 		if (coinPieceWouldBeCapturedAt(x+1, y+1))
 			captureCoinPieceAt(x+1, y+1);
+	}
+
+	public void placeGuerillaPiece(final Point point) {
+		Piece piece = new Piece(point);
+		m_guerillaPieces.add(piece);
+
+		captureCoinPiecesAroundGuerillaAt(point.x, point.y);
+		--m_numGuerillaPiecesLeft;
 
 		m_gameStarted = true;
 		if (m_firstGuerillaPiece == null)
@@ -316,6 +326,7 @@ public class BoardModel {
 	}
 
 	public void reset() {
+		m_numGuerillaPiecesLeft = MAX_GUERILLA_PIECES;
 		m_firstGuerillaPiece = null;
 		m_selectedCoinPiece = null;
 		m_lastCoinMoveCaptured = false;
@@ -341,6 +352,7 @@ public class BoardModel {
 
 	/// PRIVATE MEMBERS
 
+	private int m_numGuerillaPiecesLeft = MAX_GUERILLA_PIECES;
 	private Piece m_firstGuerillaPiece = null;
 	private Piece m_selectedCoinPiece = null;
 	private boolean m_lastCoinMoveCaptured = false;
@@ -349,6 +361,7 @@ public class BoardModel {
 
 	/// @{
 	/// Pieces
+	private static final int MAX_GUERILLA_PIECES = 66;
 	private final ArrayList<Piece> m_coinPieces = new ArrayList<Piece>();
 	private final ArrayList<Piece> m_guerillaPieces = new ArrayList<Piece>();
 	/// @}

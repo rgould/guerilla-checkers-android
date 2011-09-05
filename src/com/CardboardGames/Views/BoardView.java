@@ -29,6 +29,7 @@ public class BoardView extends View
 	public void onDraw(Canvas canvas) {
 		drawBoard(canvas);
 		drawPieces(canvas);
+		drawHUD(canvas);
 		if (m_model.isGameOver())
 			drawGameOver(canvas);
 	}
@@ -272,6 +273,20 @@ public class BoardView extends View
 			drawGuerillaPotentialMoves(canvas);
 	}
 
+	private void drawNumGuerillaPiecesLeft(Canvas canvas) {
+		m_paint.setTextAlign(Align.LEFT);
+		int num_left = m_model.getRemainingGuerillaPieces();
+		String text = "Guerrillas Left: " + num_left;
+		canvas.drawText(text, 2*BORDER_SIZE_PX, 2*BORDER_SIZE_PX, m_paint);
+	}
+
+	private void drawHUD(Canvas canvas) {
+		m_paint.setColor(HUD_TEXT_CLR);
+		m_paint.setTextSize(24.0f);
+		m_paint.setTypeface(Typeface.DEFAULT_BOLD);
+		drawNumGuerillaPiecesLeft(canvas);
+	}
+
 	private String getWinnerText() {
 		return (m_model.getNumCoinPieces() == 0) ?
 			"GUERRILLAS WIN!" : "COUNTER-INSURGENTS WIN!";
@@ -312,14 +327,15 @@ public class BoardView extends View
 
 	/// @{
 	/// Board Colours (32 bit ARGB format)
-	private final int BORDER_CLR              = 0xFFA66000;
-	private final int COIN_PIECE_CLR          = 0xFF3B9E00;
-	private final int COIN_PIECE_SECONDARY_CLR = 0xFFAAAA00;
-	private final int SELECTED_COIN_PIECE_CLR = 0xFF00AA72;
+	private final int BORDER_CLR                        = 0xFFA66000;
+	private final int COIN_PIECE_CLR                    = 0xFF3B9E00;
+	private final int COIN_PIECE_SECONDARY_CLR          = 0xFFAAAA00;
+	private final int SELECTED_COIN_PIECE_CLR           = 0xFF00AA72;
 	private final int SELECTED_COIN_PIECE_SECONDARY_CLR = 0xFFBBBB00;
-	private final int GUERILLA_PIECE_CLR      = 0xFF222222;
-	private final int WHITE_CLR               = 0xFF9B7D27;
-	private final int BLACK_CLR               = 0xFFC1A657;
-	private final int GAME_OVER_TEXT_CLR	  = 0xFF000000;
+	private final int GUERILLA_PIECE_CLR                = 0xFF222222;
+	private final int WHITE_CLR                         = 0xFF9B7D27;
+	private final int BLACK_CLR                         = 0xFFC1A657;
+	private final int GAME_OVER_TEXT_CLR                = 0xFF000000;
+	private final int HUD_TEXT_CLR                      = 0xFFFFFFFF;
 	/// @}
 }
