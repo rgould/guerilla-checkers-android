@@ -275,17 +275,26 @@ public class BoardView extends View
 		drawNumGuerillaPiecesLeft(canvas);
 	}
 
-	private String getWinnerText() {
+	private BoardModel.Player getWinner() {
+		return (m_model.getNumCoinPieces() == 0) ?
+			BoardModel.Player.GUERILLA_PLAYER :
+			BoardModel.Player.COIN_PLAYER;
+	}
+
+	private String getWinnerText(BoardModel.Player winner) {
+		return winner == BoardModel.Player.GUERILLA_PLAYER ?
+			"GUERRILLAS WIN!" : "COUNTER-INSURGENTS WIN!";
+	}
+
+	private String getGuerillasPlayedText() {
 		int num_pieces_used = BoardModel.MAX_GUERILLA_PIECES
 			- m_model.getRemainingGuerillaPieces();
-		return (m_model.getNumCoinPieces() == 0) ?
-			"GUERRILLAS WIN WITH " + num_pieces_used + " PIECES PLAYED!" :
-			"COUNTER-INSURGENTS WIN!";
+		return num_pieces_used + " GUERRILLA PIECES PLAYED";
 	}
 
 	private void drawGameOver(Canvas canvas) {
 		m_paint.setColor(GAME_OVER_TEXT_CLR);
-		m_paint.setTextSize(100.0f);
+		m_paint.setTextSize(60.0f);
 		m_paint.setTypeface(Typeface.DEFAULT_BOLD);
 		m_paint.setTextAlign(Align.CENTER);
 
@@ -295,9 +304,15 @@ public class BoardView extends View
 		int cy = (int)(getHeight()/2 - font_height/4);
 		canvas.drawText("GAME OVER", cx, cy, m_paint);
 
-		m_paint.setTextSize(30.0f);
+		BoardModel.Player winner = getWinner();
+		m_paint.setTextSize(20.0f);
 		cy = (int)(getHeight()/2 - 3*font_height/5);
-		canvas.drawText(getWinnerText(), cx, cy, m_paint);
+		canvas.drawText(getWinnerText(winner), cx, cy, m_paint);
+
+		if (winner == BoardModel.Player.GUERILLA_PLAYER) {
+			cy = (int)(getHeight()/2 - font_height);
+			canvas.drawText(getGuerillasPlayedText(), cx, cy, m_paint);
+		}
 	}
 
 	/// PRIVATE MEMBERS
