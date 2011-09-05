@@ -14,6 +14,10 @@ public class GameController
 		m_view = view;
 	}
 
+	public void setView(BoardView view) {
+		m_view = view;
+	}
+
 	public void handleCoinInput(float viewx, float viewy)
 	{
 		Point board_coords = m_view.getCoinBoardCoords(viewx, viewy);
@@ -54,7 +58,7 @@ public class GameController
 			m_state = GameState.GUERILLA_SETUP_SECOND;
 			return;
 		case GUERILLA_SETUP_SECOND:
-			m_view.setShouldDrawGuerillaPotentialMoves(false);
+			m_model.setCurrentPlayer(BoardModel.Player.COIN_PLAYER);
 			m_state = GameState.COIN_MOVE;
 			return;
 		case COIN_MOVE:
@@ -70,7 +74,7 @@ public class GameController
 			m_model.setCoinMustCapture(false);
 			m_model.setLastCoinMoveCaptured(false);
 			m_model.deselectCoinPiece();
-			m_view.setShouldDrawGuerillaPotentialMoves(true);
+			m_model.setCurrentPlayer(BoardModel.Player.GUERILLA_PLAYER);
 			m_view.invalidate();
 			m_state = GameState.GUERILLA_MOVE_FIRST;
 			return;
@@ -81,13 +85,12 @@ public class GameController
 			}
 		case GUERILLA_MOVE_SECOND: // pass-through from first
 			m_model.clearGuerillaPieceHistory();
-			m_view.setShouldDrawGuerillaPotentialMoves(false);
+			m_model.setCurrentPlayer(BoardModel.Player.COIN_PLAYER);
 			m_view.invalidate();
 			m_state = GameState.COIN_MOVE;
 			return;
 		case END_GAME:
 			m_model.reset();
-			m_view.reset();
 			m_view.invalidate();
 			m_state = GameState.GUERILLA_SETUP_FIRST;
 			break;

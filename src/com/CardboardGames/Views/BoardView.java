@@ -49,10 +49,6 @@ public class BoardView extends View
 		return getCoinBoardCoords(viewx - half_rect, viewy - half_rect);
 	}
 
-	public void reset() {
-		m_shouldDrawGuerillaPotentialMoves = true;
-	}
-
 	// PRIVATE METHODS
 
 	private Rect getRect(int row, int col, Point board_pos, int board_size) {
@@ -133,7 +129,7 @@ public class BoardView extends View
 		for (int idx = 1; idx < 12; ++idx) {
 			theta += SEGMENT_ANGLE;
 			double radius_multiplier = (idx % 2 == 1) ? IN_OUT_RATIO : 1;
-			int r = (int)(radius * radius_multiplier);
+			double r = radius * radius_multiplier;
 			int x = (int)(r * Math.cos(theta));
 			int y = (int)(r * Math.sin(theta));
 			star.lineTo(center.x + x, center.y - y);
@@ -256,20 +252,12 @@ public class BoardView extends View
 		return m_model.hasSelectedCoinPiece();
 	}
 
-	private boolean shouldDrawGuerillaPotentialMoves() {
-		return m_shouldDrawGuerillaPotentialMoves;
-	}
-
-	public void setShouldDrawGuerillaPotentialMoves(boolean should_draw) {
-		m_shouldDrawGuerillaPotentialMoves = should_draw;
-	}
-
 	private void drawPieces(Canvas canvas) {
 		drawCoinPieces(canvas, m_model.getCoinPieces());
 		drawGuerillaPieces(canvas, m_model.getGuerillaPieces());
 		if (shouldDrawCoinPotentialMoves())
 			drawCoinPotentialMoves(canvas);
-		if (shouldDrawGuerillaPotentialMoves())
+		if (m_model.getCurrentPlayer() == BoardModel.Player.GUERILLA_PLAYER)
 			drawGuerillaPotentialMoves(canvas);
 	}
 
@@ -315,10 +303,9 @@ public class BoardView extends View
 	/// PRIVATE MEMBERS
 
 	private final Paint m_paint = new Paint();
-	private boolean m_shouldDrawGuerillaPotentialMoves = true;
 
 	/// Board Model
-	private BoardModel m_model = new BoardModel();
+	private BoardModel m_model = null;
 
 	/// @{
 	/// Board Properties

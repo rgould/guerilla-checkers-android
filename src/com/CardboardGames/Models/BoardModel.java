@@ -326,6 +326,7 @@ public class BoardModel {
 	}
 
 	public void reset() {
+		m_currentPlayer = Player.GUERILLA_PLAYER;
 		m_numGuerillaPiecesLeft = MAX_GUERILLA_PIECES;
 		m_firstGuerillaPiece = null;
 		m_selectedCoinPiece = null;
@@ -335,6 +336,14 @@ public class BoardModel {
 		m_guerillaPieces.clear();
 		m_coinPieces.clear();
 		initPieces();
+	}
+
+	public void setCurrentPlayer(Player player) {
+		m_currentPlayer = player;
+	}
+
+	public Player getCurrentPlayer() {
+		return m_currentPlayer;
 	}
 
 	/// PRIVATE TYPES
@@ -350,12 +359,18 @@ public class BoardModel {
 		public void setPosition(Point position) { this.position = position; }
 	}
 
+	public enum Player {
+		GUERILLA_PLAYER,
+		COIN_PLAYER
+	}
+
 	/// CONSTANTS
 
 	public static final int MAX_GUERILLA_PIECES = 66;
 
 	/// PRIVATE MEMBERS
 
+	private Player m_currentPlayer = Player.GUERILLA_PLAYER;
 	private int m_numGuerillaPiecesLeft = MAX_GUERILLA_PIECES;
 	private Piece m_firstGuerillaPiece = null;
 	private Piece m_selectedCoinPiece = null;

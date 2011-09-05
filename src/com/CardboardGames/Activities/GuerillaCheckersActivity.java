@@ -15,26 +15,28 @@ public class GuerillaCheckersActivity extends Activity
 {
 	/// PUBLIC METHODS
 
-	public GuerillaCheckersActivity() {
-		m_model = new BoardModel();
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		GuerillaCheckersApplication app =
+			GuerillaCheckersApplication.getInstance();
+
+		m_model = app.getModel();
 		m_view = new BoardView(this, m_model);
 		m_view.setOnTouchListener(this);
+		m_controller = app.getController();
+		m_controller.setView(m_view);
 		setContentView(m_view);
-		m_controller = new GameController(m_model, m_view);
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
 		if (event.getActionMasked() != MotionEvent.ACTION_DOWN)
 			return false;
-
 		m_controller.addTouch(event.getX(), event.getY());
 		return true;
 	}
+
 
 	/// PRIVATE MEMBERS
 
