@@ -5,9 +5,12 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.Paint.FontMetrics;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.view.View;
 
 import com.CardboardGames.Models.BoardModel;
@@ -26,6 +29,27 @@ public class BoardView extends View
 	public void onDraw(Canvas canvas) {
 		drawBoard(canvas);
 		drawPieces(canvas);
+		if (m_model.isGameOver())
+			drawGameOver(canvas);
+	}
+
+	public Point getCoinBoardCoords(float viewx, float viewy) {
+		float rect_size = getRectSize();
+		Point board_pos = getBoardPosition();
+		int xoffset = board_pos.x + BORDER_SIZE_PX;
+		int yoffset = board_pos.y + BORDER_SIZE_PX;
+		double xcoord = Math.floor((viewx - xoffset) / rect_size);
+		double ycoord = Math.floor((viewy - yoffset) / rect_size);
+		return new Point((int)xcoord, (int)ycoord);
+	}
+
+	public Point getGuerillaBoardCoords(float viewx, float viewy) {
+		float half_rect = 0.5f * getRectSize();
+		return getCoinBoardCoords(viewx - half_rect, viewy - half_rect);
+	}
+
+	public void reset() {
+		m_shouldDrawGuerillaPotentialMoves = true;
 	}
 
 	// PRIVATE METHODS
@@ -44,21 +68,6 @@ public class BoardView extends View
 
 	private int getRectSize() {
 		return (int)((double)getBoardSize() / m_model.COLS);
-	}
-
-	public Point getCoinBoardCoords(float viewx, float viewy) {
-		float rect_size = getRectSize();
-		Point board_pos = getBoardPosition();
-		int xoffset = board_pos.x + BORDER_SIZE_PX;
-		int yoffset = board_pos.y + BORDER_SIZE_PX;
-		double xcoord = Math.floor((viewx - xoffset) / rect_size);
-		double ycoord = Math.floor((viewy - yoffset) / rect_size);
-		return new Point((int)xcoord, (int)ycoord);
-	}
-
-	public Point getGuerillaBoardCoords(float viewx, float viewy) {
-		float half_rect = 0.5f * getRectSize();
-		return getCoinBoardCoords(viewx - half_rect, viewy - half_rect);
 	}
 
 	private int getBoardSizeInclBorder() {
@@ -180,7 +189,7 @@ public class BoardView extends View
 		}
 	}
 
-	int setAlpha(int color, int alpha) {
+	private int setAlpha(int color, int alpha) {
 		return (color & 0x00FFFFFF) | (alpha << 24);
 	}
 
@@ -263,6 +272,19 @@ public class BoardView extends View
 			drawGuerillaPotentialMoves(canvas);
 	}
 
+	private void drawGameOver(Canvas canvas) {
+		m_paint.setColor(GAME_OVER_TEXT_CLR);
+		m_paint.setTextSize(100.0f);
+		m_paint.setTypeface(Typeface.DEFAULT_BOLD);
+		m_paint.setTextAlign(Align.CENTER);
+
+		FontMetrics metrics = m_paint.getFontMetrics();
+		float half_font_height = metrics.top / 2;
+		int cx = getWidth() / 2;
+		int cy = (int)((getHeight()-half_font_height) / 2);
+		canvas.drawText("GAME OVER", cx, cy, m_paint);
+	}
+
 	/// PRIVATE MEMBERS
 
 	private final Paint m_paint = new Paint();
@@ -289,5 +311,6 @@ public class BoardView extends View
 	private final int GUERILLA_PIECE_CLR      = 0xFF222222;
 	private final int WHITE_CLR               = 0xFF9B7D27;
 	private final int BLACK_CLR               = 0xFFC1A657;
+	private final int GAME_OVER_TEXT_CLR	  = 0xFF000000;
 	/// @}
 }

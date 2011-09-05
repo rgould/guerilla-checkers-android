@@ -43,7 +43,8 @@ public class GameController
 	}
 
 	public void moveToNextState() {
-		if (m_model.isGameOver()) {
+		if (m_state != GameState.END_GAME && m_model.isGameOver()) {
+			m_view.invalidate();
 			m_state = GameState.END_GAME;
 			return;
 		}
@@ -82,6 +83,10 @@ public class GameController
 			m_state = GameState.COIN_MOVE;
 			return;
 		case END_GAME:
+			m_model.reset();
+			m_view.reset();
+			m_view.invalidate();
+			m_state = GameState.GUERILLA_SETUP_FIRST;
 			break;
 		}
 	}
@@ -99,6 +104,7 @@ public class GameController
 			handleCoinInput(viewx, viewy);
 			break;
 		case END_GAME:
+			moveToNextState();
 			break;
 		}
 	}

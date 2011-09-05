@@ -132,6 +132,8 @@ public class BoardModel {
 	}
 
 	public boolean isGameOver() {
+		if (!m_gameStarted)
+			return false;
 		if (m_guerillaPieces.size() == 0)
 			return true;
 		if (m_coinPieces.size() == 0)
@@ -152,6 +154,8 @@ public class BoardModel {
 			captureCoinPieceAt(x+1, y);
 		if (coinPieceWouldBeCapturedAt(x+1, y+1))
 			captureCoinPieceAt(x+1, y+1);
+
+		m_gameStarted = true;
 	}
 
 	public boolean hasSelectedPiece() {
@@ -270,6 +274,16 @@ public class BoardModel {
 		m_coinPieces.add(new Piece(new Point(4,5)));
 	}
 
+	public void reset() {
+		m_selectedCoinPiece = null;
+		m_lastCoinMoveCaptured = false;
+		m_coinMustCapture = false;
+		m_gameStarted = false;
+		m_guerillaPieces.clear();
+		m_coinPieces.clear();
+		initPieces();
+	}
+
 	/// PRIVATE TYPES
 
 	public class Piece {
@@ -288,6 +302,7 @@ public class BoardModel {
 	private Piece m_selectedCoinPiece = null;
 	private boolean m_lastCoinMoveCaptured = false;
 	private boolean m_coinMustCapture = false;
+	private boolean m_gameStarted = false;
 
 	/// @{
 	/// Pieces
