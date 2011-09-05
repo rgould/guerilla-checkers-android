@@ -108,6 +108,12 @@ public class BoardModel {
 		return m_guerillaPieces.size();
 	}
 
+	private boolean areGuerillaPiecesAdjacent(Point first, Point second) {
+		int xdiff = Math.abs(first.x - second.x);
+		int ydiff = Math.abs(first.y - second.y);
+		return (xdiff == 0 && ydiff == 1 || xdiff == 1 && ydiff == 0);
+	}
+
 	private boolean isValidGuerillaPlacement(Point point, boolean is_first) {
 		if (point.x < 0 || point.x >= COLS - 1)
 			return false;
@@ -122,6 +128,11 @@ public class BoardModel {
 			getGuerillaPieceAt(point.x, point.y + 1) == null &&
 			getGuerillaPieceAt(point.x, point.y - 1) == null) {
 			return false;
+		}
+		if (m_firstGuerillaPiece != null) {
+			Point first_pos = m_firstGuerillaPiece.getPosition();
+			if (!areGuerillaPiecesAdjacent(point, first_pos))
+				return false;
 		}
 		return true;
 	}
@@ -156,6 +167,10 @@ public class BoardModel {
 			captureCoinPieceAt(x+1, y+1);
 
 		m_gameStarted = true;
+		if (m_firstGuerillaPiece == null)
+			m_firstGuerillaPiece = piece;
+		else
+			m_firstGuerillaPiece = null;
 	}
 
 	public boolean hasSelectedPiece() {
@@ -275,6 +290,7 @@ public class BoardModel {
 	}
 
 	public void reset() {
+		m_firstGuerillaPiece = null;
 		m_selectedCoinPiece = null;
 		m_lastCoinMoveCaptured = false;
 		m_coinMustCapture = false;
@@ -299,6 +315,7 @@ public class BoardModel {
 
 	/// PRIVATE MEMBERS
 
+	private Piece m_firstGuerillaPiece = null;
 	private Piece m_selectedCoinPiece = null;
 	private boolean m_lastCoinMoveCaptured = false;
 	private boolean m_coinMustCapture = false;
