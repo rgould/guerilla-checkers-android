@@ -350,6 +350,10 @@ public class BoardModel {
 		public void setPosition(Point position) { this.position = position; }
 	}
 
+	/// CONSTANTS
+
+	public static final int MAX_GUERILLA_PIECES = 66;
+
 	/// PRIVATE MEMBERS
 
 	private int m_numGuerillaPiecesLeft = MAX_GUERILLA_PIECES;
@@ -361,7 +365,6 @@ public class BoardModel {
 
 	/// @{
 	/// Pieces
-	private static final int MAX_GUERILLA_PIECES = 66;
 	private final ArrayList<Piece> m_coinPieces = new ArrayList<Piece>();
 	private final ArrayList<Piece> m_guerillaPieces = new ArrayList<Piece>();
 	/// @}

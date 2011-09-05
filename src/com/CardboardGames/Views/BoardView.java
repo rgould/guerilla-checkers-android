@@ -288,8 +288,11 @@ public class BoardView extends View
 	}
 
 	private String getWinnerText() {
+		int num_pieces_used = BoardModel.MAX_GUERILLA_PIECES
+			- m_model.getRemainingGuerillaPieces();
 		return (m_model.getNumCoinPieces() == 0) ?
-			"GUERRILLAS WIN!" : "COUNTER-INSURGENTS WIN!";
+			"GUERRILLAS WIN WITH " + num_pieces_used + " PIECES PLAYED!" :
+			"COUNTER-INSURGENTS WIN!";
 	}
 
 	private void drawGameOver(Canvas canvas) {
