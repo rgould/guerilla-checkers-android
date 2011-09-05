@@ -21,8 +21,6 @@ public class GuerillaCheckersActivity
 		m_model = new BoardModel();
 	}
 
-	/** Called when the activity is first created. */
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,10 +34,7 @@ public class GuerillaCheckersActivity
 		if (event.getActionMasked() != MotionEvent.ACTION_DOWN)
 			return false;
 
-		float viewx = event.getX();
-		float viewy = event.getY();
-		m_controller.addTouch(viewx, viewy);
-
+		m_controller.addTouch(event.getX(), event.getY());
 		if (m_model.isGameOver()) {
 			TextView tv = new TextView(this);
 			tv.setText("GAME OVER!");

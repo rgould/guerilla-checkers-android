@@ -57,6 +57,10 @@ public class BoardModel {
 		if (getCoinPieceAt(x, y) != null)
 			return false;
 
+		if (m_coinMustCapture
+			&& !wouldCaptureGuerillaPiece(piece, new Point(x, y)))
+			return false;
+
 		return true;
 	}
 
@@ -155,7 +159,11 @@ public class BoardModel {
 	}
 
 	public boolean selectCoinPieceAt(Point point) {
+		if (m_coinMustCapture)
+			return false;
+
 		m_selectedCoinPiece = getCoinPieceAt(point);
+		m_lastCoinMoveCaptured = false;
 		return m_selectedCoinPiece != null;
 	}
 
@@ -174,7 +182,11 @@ public class BoardModel {
 		return captureCoinPieceAt(new Point(x, y));
 	}
 
-	public boolean captureGuerillaPiece(Point coin_from, Point coin_to) {
+	private boolean doCaptureGuerillaPiece(
+		Point coin_from,
+		Point coin_to,
+		boolean do_capture)
+	{
 		int guerilla_x = coin_from.x - (coin_to.x < coin_from.x ? 1 : 0);
 		int guerilla_y = coin_from.y - (coin_to.y < coin_from.y ? 1 : 0);
 		Point capture_point = new Point(guerilla_x, guerilla_y);
@@ -182,11 +194,24 @@ public class BoardModel {
 		int num_pieces = m_guerillaPieces.size();
 		for (int idx = 0; idx < num_pieces; ++idx) {
 			if (m_guerillaPieces.get(idx).getPosition().equals(capture_point)) {
-				m_guerillaPieces.remove(idx);
+				if (do_capture)
+					m_guerillaPieces.remove(idx);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean captureGuerillaPiece(Point coin_from, Point coin_to) {
+		return doCaptureGuerillaPiece(coin_from, coin_to, true);
+	}
+
+	public boolean wouldCaptureGuerillaPiece(Piece piece, Point coin_to) {
+		return doCaptureGuerillaPiece(piece.getPosition(), coin_to, false);
+	}
+
+	public boolean wouldCaptureGuerillaPiece(Piece piece, int x, int y) {
+		return wouldCaptureGuerillaPiece(piece, new Point(x, y));
 	}
 
 	public boolean moveSelectedCoinPiece(Point point) {
@@ -196,13 +221,42 @@ public class BoardModel {
 			return false;
 
 		Point piece_pos = m_selectedCoinPiece.getPosition();
-		captureGuerillaPiece(piece_pos, point);
+		m_lastCoinMoveCaptured = captureGuerillaPiece(piece_pos, point);
 		m_selectedCoinPiece.setPosition(point);
 		return true;
 	}
 
 	public void deselectCoinPiece() {
 		m_selectedCoinPiece = null;
+	}
+
+	public boolean lastCoinMoveCaptured() {
+		return m_lastCoinMoveCaptured;
+	}
+
+	public void setLastCoinMoveCaptured(boolean captured) {
+		m_lastCoinMoveCaptured = captured;
+	}
+
+	public boolean selectedCoinPieceHasValidMoves() {
+		if (m_selectedCoinPiece == null)
+			return false;
+
+		Point pos = m_selectedCoinPiece.getPosition();
+		int x = pos.x;
+		int y = pos.y;
+
+		if (isValidCoinMove(m_selectedCoinPiece, x-1, y-1) ||
+			isValidCoinMove(m_selectedCoinPiece, x-1, y+1) ||
+			isValidCoinMove(m_selectedCoinPiece, x+1, y-1) ||
+			isValidCoinMove(m_selectedCoinPiece, x+1, y+1)) {
+			return true;
+		}
+		return false;
+	}
+
+	public void setCoinMustCapture(boolean must_capture) {
+		m_coinMustCapture = must_capture;
 	}
 
 	/// PRIVATE METHODS
@@ -231,7 +285,9 @@ public class BoardModel {
 
 	/// PRIVATE MEMBERS
 
-	Piece m_selectedCoinPiece = null;
+	private Piece m_selectedCoinPiece = null;
+	private boolean m_lastCoinMoveCaptured = false;
+	private boolean m_coinMustCapture = false;
 
 	/// @{
 	/// Pieces
