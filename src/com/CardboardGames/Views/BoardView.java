@@ -56,8 +56,8 @@ public class BoardView extends View
 	// PRIVATE METHODS
 
 	private Rect getRect(int row, int col, Point board_pos, int board_size) {
-		double rect_width = (double)board_size / m_model.COLS;
-		double rect_height = (double)board_size / m_model.ROWS;
+		double rect_width = (double)board_size / BoardModel.COLS;
+		double rect_height = (double)board_size / BoardModel.ROWS;
 
 		double left = board_pos.x + BORDER_SIZE_PX + col * rect_width;
 		double top = board_pos.y + BORDER_SIZE_PX + row * rect_height;
@@ -68,7 +68,7 @@ public class BoardView extends View
 	}
 
 	private int getRectSize() {
-		return (int)((double)getBoardSize() / m_model.COLS);
+		return (int)((double)getBoardSize() / BoardModel.COLS);
 	}
 
 	private int getBoardSizeInclBorder() {
@@ -108,8 +108,8 @@ public class BoardView extends View
 			m_paint);
 
 		m_paint.setColor(WHITE_CLR);
-		for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
-			for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
+		for (int idx_row = 0; idx_row < BoardModel.ROWS; ++idx_row) {
+			for (int idx_col = 0; idx_col < BoardModel.COLS; ++idx_col) {
 				if (m_model.isBlack(idx_row, idx_col))
 					continue;
 
@@ -200,8 +200,8 @@ public class BoardView extends View
 		int radius = getGuerillaPieceRadius(board_size);
 		int color = setAlpha(GUERILLA_PIECE_CLR, 0x33);
 		m_paint.setColor(color);
-		for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
-			for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
+		for (int idx_col = 0; idx_col < BoardModel.COLS; ++idx_col) {
+			for (int idx_row = 0; idx_row < BoardModel.ROWS; ++idx_row) {
 				Point point = new Point(idx_col, idx_row);
 				if (!m_model.isValidGuerillaPlacement(point))
 					continue;
@@ -222,8 +222,8 @@ public class BoardView extends View
 		int alpha = 0x66;
 		int fg_color = setAlpha(SELECTED_COIN_PIECE_SECONDARY_CLR, alpha);
 		int bg_color = setAlpha(SELECTED_COIN_PIECE_CLR, alpha);
-		for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
-			for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
+		for (int idx_col = 0; idx_col < BoardModel.COLS; ++idx_col) {
+			for (int idx_row = 0; idx_row < BoardModel.ROWS; ++idx_row) {
 				if (!m_model.isValidCoinMove(piece, idx_col, idx_row))
 					continue;
 				Rect r = getRect(idx_row, idx_col, board_pos, board_size);
@@ -322,23 +322,23 @@ public class BoardView extends View
 
 	/// @{
 	/// Board Properties
-	private final int BORDER_SIZE_PX = 10;
-	private final double COIN_PIECE_TO_SQUARE_RATIO = 0.9;
-	private final double COIN_FG_BG_RATIO = 0.7;
-	private final double GUERILLA_PIECE_TO_SQUARE_RATIO = 0.4;
+	private static final int BORDER_SIZE_PX = 10;
+	private static final double COIN_PIECE_TO_SQUARE_RATIO = 0.9;
+	private static final double COIN_FG_BG_RATIO = 0.7;
+	private static final double GUERILLA_PIECE_TO_SQUARE_RATIO = 0.4;
 	/// @}
 
 	/// @{
-	/// Board Colours (32 bit ARGB format)
-	private final int BORDER_CLR                        = 0xFFA66000;
-	private final int COIN_PIECE_CLR                    = 0xFF3B9E00;
-	private final int COIN_PIECE_SECONDARY_CLR          = 0xFFAAAA00;
-	private final int SELECTED_COIN_PIECE_CLR           = 0xFF00AA72;
-	private final int SELECTED_COIN_PIECE_SECONDARY_CLR = 0xFFBBBB00;
-	private final int GUERILLA_PIECE_CLR                = 0xFF222222;
-	private final int WHITE_CLR                         = 0xFF9B7D27;
-	private final int BLACK_CLR                         = 0xFFC1A657;
-	private final int GAME_OVER_TEXT_CLR                = 0xFF000000;
-	private final int HUD_TEXT_CLR                      = 0xFFFFFFFF;
+	/// Board Colors (32 bit ARGB format)
+	private static final int BORDER_CLR                        = 0xFFA66000;
+	private static final int COIN_PIECE_CLR                    = 0xFF3B9E00;
+	private static final int COIN_PIECE_SECONDARY_CLR          = 0xFFAAAA00;
+	private static final int SELECTED_COIN_PIECE_CLR           = 0xFF00AA72;
+	private static final int SELECTED_COIN_PIECE_SECONDARY_CLR = 0xFFBBBB00;
+	private static final int GUERILLA_PIECE_CLR                = 0xFF222222;
+	private static final int WHITE_CLR                         = 0xFF9B7D27;
+	private static final int BLACK_CLR                         = 0xFFC1A657;
+	private static final int GAME_OVER_TEXT_CLR                = 0xFF000000;
+	private static final int HUD_TEXT_CLR                      = 0xFFFFFFFF;
 	/// @}
 }

@@ -114,7 +114,7 @@ public class GameController
 
 	/// PRIVATE TYPES
 
-	enum GameState {
+	private enum GameState {
 		GUERILLA_SETUP_FIRST,
 		GUERILLA_SETUP_SECOND,
 		COIN_MOVE,
@@ -126,7 +126,7 @@ public class GameController
 
 	/// PRIVATE MEMBERS
 
-	GameState m_state = GameState.GUERILLA_SETUP_FIRST;
-	BoardModel m_model = null;
-	BoardView m_view = null;
+	private GameState m_state = GameState.GUERILLA_SETUP_FIRST;
+	private BoardModel m_model = null;
+	private BoardView m_view = null;
 }
