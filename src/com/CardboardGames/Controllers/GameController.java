@@ -53,6 +53,7 @@ public class GameController
 			m_state = GameState.GUERILLA_SETUP_SECOND;
 			return;
 		case GUERILLA_SETUP_SECOND:
+			m_view.setShouldDrawGuerillaPotentialMoves(false);
 			m_state = GameState.COIN_MOVE;
 			return;
 		case COIN_MOVE:
@@ -68,6 +69,7 @@ public class GameController
 			m_model.setCoinMustCapture(false);
 			m_model.setLastCoinMoveCaptured(false);
 			m_model.deselectCoinPiece();
+			m_view.setShouldDrawGuerillaPotentialMoves(true);
 			m_view.invalidate();
 			m_state = GameState.GUERILLA_MOVE_FIRST;
 			return;
@@ -75,6 +77,8 @@ public class GameController
 			m_state = GameState.GUERILLA_MOVE_SECOND;
 			return;
 		case GUERILLA_MOVE_SECOND:
+			m_view.setShouldDrawGuerillaPotentialMoves(false);
+			m_view.invalidate();
 			m_state = GameState.COIN_MOVE;
 			return;
 		case END_GAME:

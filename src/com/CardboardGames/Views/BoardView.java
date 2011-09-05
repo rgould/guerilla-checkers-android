@@ -184,7 +184,24 @@ public class BoardView extends View
 		return (color & 0x00FFFFFF) | (alpha << 24);
 	}
 
-	private void drawPotentialMoves(Canvas canvas) {
+	private void drawGuerillaPotentialMoves(Canvas canvas) {
+		Point board_pos = getBoardPosition();
+		int board_size = getBoardSize();
+		int radius = getGuerillaPieceRadius(board_size);
+		int color = setAlpha(GUERILLA_PIECE_CLR, 0x33);
+		m_paint.setColor(color);
+		for (int idx_col = 0; idx_col < m_model.COLS; ++idx_col) {
+			for (int idx_row = 0; idx_row < m_model.ROWS; ++idx_row) {
+				Point point = new Point(idx_col, idx_row);
+				if (!m_model.isValidGuerillaPlacement(point))
+					continue;
+				Rect r = getRect(idx_row, idx_col, board_pos, board_size);
+				drawGuerillaPiece(canvas, r.right, r.bottom, radius);
+			}
+		}
+	}
+
+	private void drawCoinPotentialMoves(Canvas canvas) {
 		BoardModel.Piece piece = m_model.getSelectedCoinPiece();
 		if (piece == null)
 			return;
@@ -225,16 +242,31 @@ public class BoardView extends View
 		}
 	}
 
+	private boolean shouldDrawCoinPotentialMoves() {
+		return m_model.hasSelectedCoinPiece();
+	}
+
+	private boolean shouldDrawGuerillaPotentialMoves() {
+		return m_shouldDrawGuerillaPotentialMoves;
+	}
+
+	public void setShouldDrawGuerillaPotentialMoves(boolean should_draw) {
+		m_shouldDrawGuerillaPotentialMoves = should_draw;
+	}
+
 	private void drawPieces(Canvas canvas) {
 		drawCoinPieces(canvas, m_model.getCoinPieces());
 		drawGuerillaPieces(canvas, m_model.getGuerillaPieces());
-		if (m_model.hasSelectedCoinPiece())
-			drawPotentialMoves(canvas);
+		if (shouldDrawCoinPotentialMoves())
+			drawCoinPotentialMoves(canvas);
+		if (shouldDrawGuerillaPotentialMoves())
+			drawGuerillaPotentialMoves(canvas);
 	}
 
 	/// PRIVATE MEMBERS
 
 	private final Paint m_paint = new Paint();
+	private boolean m_shouldDrawGuerillaPotentialMoves = true;
 
 	/// Board Model
 	private BoardModel m_model = new BoardModel();
