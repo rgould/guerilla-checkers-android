@@ -272,6 +272,11 @@ public class BoardView extends View
 			drawGuerillaPotentialMoves(canvas);
 	}
 
+	private String getWinnerText() {
+		return (m_model.getNumCoinPieces() == 0) ?
+			"GUERRILLAS WIN!" : "COUNTER-INSURGENTS WIN!";
+	}
+
 	private void drawGameOver(Canvas canvas) {
 		m_paint.setColor(GAME_OVER_TEXT_CLR);
 		m_paint.setTextSize(100.0f);
@@ -279,10 +284,14 @@ public class BoardView extends View
 		m_paint.setTextAlign(Align.CENTER);
 
 		FontMetrics metrics = m_paint.getFontMetrics();
-		float half_font_height = metrics.top / 2;
+		float font_height = metrics.top;
 		int cx = getWidth() / 2;
-		int cy = (int)((getHeight()-half_font_height) / 2);
+		int cy = (int)(getHeight()/2 - font_height/4);
 		canvas.drawText("GAME OVER", cx, cy, m_paint);
+
+		m_paint.setTextSize(30.0f);
+		cy = (int)(getHeight()/2 - 3*font_height/5);
+		canvas.drawText(getWinnerText(), cx, cy, m_paint);
 	}
 
 	/// PRIVATE MEMBERS

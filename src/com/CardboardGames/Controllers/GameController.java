@@ -75,9 +75,12 @@ public class GameController
 			m_state = GameState.GUERILLA_MOVE_FIRST;
 			return;
 		case GUERILLA_MOVE_FIRST:
-			m_state = GameState.GUERILLA_MOVE_SECOND;
-			return;
-		case GUERILLA_MOVE_SECOND:
+			if (m_model.hasValidGuerillaPlacements()) {
+				m_state = GameState.GUERILLA_MOVE_SECOND;
+				return;
+			}
+		case GUERILLA_MOVE_SECOND: // pass-through from first
+			m_model.clearGuerillaPieceHistory();
 			m_view.setShouldDrawGuerillaPotentialMoves(false);
 			m_view.invalidate();
 			m_state = GameState.COIN_MOVE;

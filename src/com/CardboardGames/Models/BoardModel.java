@@ -142,6 +142,28 @@ public class BoardModel {
 		return isValidGuerillaPlacement(point, is_first);
 	}
 
+	public boolean isValidGuerillaPlacement(int x, int y) {
+		return isValidGuerillaPlacement(new Point(x, y));
+	}
+
+	public boolean hasValidGuerillaPlacements() {
+		if (m_coinPieces.size() == (ROWS-1)*(COLS-1))
+			return false;
+		if (m_firstGuerillaPiece == null)
+			return true;
+
+		Point pos = m_firstGuerillaPiece.getPosition();
+		int x = pos.x;
+		int y = pos.y;
+		if (isValidGuerillaPlacement(x+1, y) ||
+			isValidGuerillaPlacement(x-1, y) ||
+			isValidGuerillaPlacement(x, y+1) ||
+			isValidGuerillaPlacement(x, y-1)) {
+			return true;
+		}
+		return false;
+	}
+
 	public boolean isGameOver() {
 		if (!m_gameStarted)
 			return false;
@@ -276,6 +298,10 @@ public class BoardModel {
 
 	public void setCoinMustCapture(boolean must_capture) {
 		m_coinMustCapture = must_capture;
+	}
+
+	public void clearGuerillaPieceHistory() {
+		m_firstGuerillaPiece = null;
 	}
 
 	/// PRIVATE METHODS
