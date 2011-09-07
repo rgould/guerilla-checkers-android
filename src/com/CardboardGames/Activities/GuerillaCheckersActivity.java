@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.CardboardGames.R;
 import com.CardboardGames.Controllers.GameController;
 import com.CardboardGames.Models.BoardModel;
 import com.CardboardGames.Views.BoardView;
@@ -32,7 +33,7 @@ public class GuerillaCheckersActivity extends Activity
 		m_controller.setView(m_view);
 		setContentView(m_view);
 
-		showDialog(DIALOG_CHOOSE_TEAM_ID);
+		showDialog(DIALOG_CHOOSE_TEAM);
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
@@ -42,40 +43,45 @@ public class GuerillaCheckersActivity extends Activity
 		return true;
 	}
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-	    Dialog dialog;
-	    switch(id) {
-	    case DIALOG_CHOOSE_TEAM_ID:
-	    	final CharSequence[] items = {"Counterinsurgents", "Guerrillas"};
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Choose your preferred team:");
-			builder.setItems(items, new DialogInterface.OnClickListener() {
-			    public void onClick(DialogInterface dialog, int item) {
-			    	if (items[item] == items[0]) {
-			    		//counterinsurgents
-			    	} else if (items[item] == items[1]) {
-			    		//guerrillas
-			    	} else {
-			    		// WTF
-			    	}
-			    }
-			});
-			AlertDialog alert = builder.create();
-	    	dialog = alert;
-	        break;
-	    default:
-	        dialog = super.onCreateDialog(id);
-	    }
-	    return dialog;
-
+	private Dialog buildTeamChoiceDialog() {
+		String team_names[] = getResources().getStringArray(R.array.team_names);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.dialog_choose_team);
+		builder.setItems(team_names, m_chooseTeamHandler);
+		return builder.create();
 	}
 
+	@Override
+	protected Dialog onCreateDialog(int id) {
+	    switch(id) {
+	    case DIALOG_CHOOSE_TEAM:
+	    	return buildTeamChoiceDialog();
+	    default:
+	        return super.onCreateDialog(id);
+	    }
+	}
+
+	/// EVENT HANDLERS
+
+	private static final DialogInterface.OnClickListener m_chooseTeamHandler =
+		new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int idx_team) {
+				switch (idx_team) {
+				case IDX_COIN: // TODO: implement
+					break;
+				case IDX_GUERILLA: // TODO: implement
+					break;
+				default:
+					assert(false);
+				}
+			}
+		};
 
 	/// PRIVATE MEMBERS
 
-	private static final int DIALOG_CHOOSE_TEAM_ID = 0;
+	private static final int DIALOG_CHOOSE_TEAM = 0;
+	private static final int IDX_COIN = 0;
+	private static final int IDX_GUERILLA = 1;
 
 	GameController m_controller = null;
 	BoardModel m_model = null;
