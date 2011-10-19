@@ -3,16 +3,22 @@ package com.CardboardGames.Views;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.CardboardGames.R;
 import com.CardboardGames.Models.BoardModel;
 
 public class BoardView extends View
@@ -23,6 +29,8 @@ public class BoardView extends View
 		super(ctx);
 		m_model = model;
 		m_paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+		Resources resources = getResources();
+		m_board_texture = (BitmapDrawable)resources.getDrawable(R.drawable.board_default);
 	}
 
 	@Override
@@ -87,32 +95,46 @@ public class BoardView extends View
 		int board_size_incl_border = getBoardSizeInclBorder();
 		int board_size_px = getBoardSize();
 
-		m_paint.setColor(BORDER_CLR);
-		canvas.drawRect(
-			board_pos.x,
-			board_pos.y,
-			board_pos.x + board_size_incl_border,
-			board_pos.y + board_size_incl_border,
-			m_paint);
+		m_board_texture.setBounds(board_pos.x + BORDER_SIZE_PX,
+				                  board_pos.y + BORDER_SIZE_PX,
+				                  board_pos.x + BORDER_SIZE_PX + board_size_px,
+				                  board_pos.y + BORDER_SIZE_PX + board_size_px);
+		m_board_texture.draw(canvas);
+		if(DEBUG_VIEW) {
+			m_paint.setColor(BORDER_CLR);
+			Style style = m_paint.getStyle();
+			try {
+				m_paint.setStyle(Style.STROKE);
+				canvas.drawRect(
+					board_pos.x,
+					board_pos.y,
+					board_pos.x + board_size_incl_border,
+					board_pos.y + board_size_incl_border,
+					m_paint);
 
-		m_paint.setColor(BLACK_CLR);
-		canvas.drawRect(
-			board_pos.x + BORDER_SIZE_PX,
-			board_pos.y + BORDER_SIZE_PX,
-			board_pos.x + BORDER_SIZE_PX + board_size_px,
-			board_pos.y + BORDER_SIZE_PX + board_size_px,
-			m_paint);
+				m_paint.setColor(PINK);
+				canvas.drawRect(
+					board_pos.x + BORDER_SIZE_PX,
+					board_pos.y + BORDER_SIZE_PX,
+					board_pos.x + BORDER_SIZE_PX + board_size_px,
+					board_pos.y + BORDER_SIZE_PX + board_size_px,
+					m_paint);
 
-		m_paint.setColor(WHITE_CLR);
-		for (int idx_row = 0; idx_row < BoardModel.ROWS; ++idx_row) {
-			for (int idx_col = 0; idx_col < BoardModel.COLS; ++idx_col) {
-				if (m_model.isBlack(idx_row, idx_col))
-					continue;
+				m_paint.setColor(PINK);
+				for (int idx_row = 0; idx_row < BoardModel.ROWS; ++idx_row) {
+					for (int idx_col = 0; idx_col < BoardModel.COLS; ++idx_col) {
+						if (m_model.isBlack(idx_row, idx_col))
+							continue;
 
-				Rect rect = getRect(idx_row, idx_col, board_pos, board_size_px);
-				canvas.drawRect(rect, m_paint);
+						Rect rect = getRect(idx_row, idx_col, board_pos, board_size_px);
+						canvas.drawRect(rect, m_paint);
+					}
+				}
 			}
-		}
+			finally {
+				m_paint.setStyle(style);
+			}			
+		}		
 	}
 
 	private void drawStar(Canvas canvas, Point center, int radius) {
@@ -194,7 +216,7 @@ public class BoardView extends View
 		Point board_pos = getBoardPosition();
 		int board_size = getBoardSize();
 		int radius = getGuerillaPieceRadius(board_size);
-		int color = setAlpha(GUERILLA_PIECE_CLR, 0x33);
+		int color = setAlpha(GUERILLA_PIECE_CLR, 0x66);
 		m_paint.setColor(color);
 		for (int idx_col = 0; idx_col < BoardModel.COLS; ++idx_col) {
 			for (int idx_row = 0; idx_row < BoardModel.ROWS; ++idx_row) {
@@ -321,6 +343,7 @@ public class BoardView extends View
 
 	/// Board Model
 	private BoardModel m_model = null;
+	private BitmapDrawable m_board_texture;
 
 	/// @{
 	/// Board Properties
@@ -332,6 +355,7 @@ public class BoardView extends View
 
 	/// @{
 	/// Board Colors (32 bit ARGB format)
+	private static final int PINK                              = 0xFFFF00FF;
 	private static final int BORDER_CLR                        = 0xFFA66000;
 	private static final int COIN_PIECE_CLR                    = 0xFF3B9E00;
 	private static final int COIN_PIECE_SECONDARY_CLR          = 0xFFAAAA00;
@@ -343,4 +367,5 @@ public class BoardView extends View
 	private static final int GAME_OVER_TEXT_CLR                = 0xFF000000;
 	private static final int HUD_TEXT_CLR                      = 0xFFFFFFFF;
 	/// @}
+	private static final boolean DEBUG_VIEW = false;
 }
