@@ -1,6 +1,9 @@
 package com.CardboardGames.GuerillaCheckers.Core.Actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 
 import com.CardboardGames.Core.Math.Point2I;
 import com.CardboardGames.GuerillaCheckers.Core.BoardState;
@@ -13,11 +16,15 @@ public class Move extends Action {
 	void init(Point2I from, Point2I to) {
 		assert(from != null);
 		assert(to != null);
+		assert(from.x != to.x && from.y != to.y);
 		m_from = from;
 		m_to = to;
 	}
+	public Move(Point2I from, Point2I to, Action... actions) {
+		this(from, to, Arrays.asList(actions));
+	}
 	
-	public Move(Point2I from, Point2I to, ArrayList<Action> sideEffects) {
+	public Move(Point2I from, Point2I to, List<Action> sideEffects) {
 		super(sideEffects);
 		init(from, to);
 	}
@@ -40,6 +47,7 @@ public class Move extends Action {
 		assert(!boardState.coinPieceExistsAt(from));
 	}
 	
+	
 	@Override
 	public void doExecute(BoardState boardState) {
 		move(boardState, m_from, m_to);
@@ -50,15 +58,3 @@ public class Move extends Action {
 		move(boardState, m_to, m_from);
 	}
 }
-
-
-//go to dungeon
-//  reveal hand
-//  choose monster
-//  choose card
-//    select target
-//  choose card?
-//    select target...
-//  ....
-//  kill monster
-//  spoils

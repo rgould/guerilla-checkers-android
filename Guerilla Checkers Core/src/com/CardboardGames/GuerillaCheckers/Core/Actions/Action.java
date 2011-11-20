@@ -1,22 +1,24 @@
 package com.CardboardGames.GuerillaCheckers.Core.Actions;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import com.CardboardGames.GuerillaCheckers.Core.BoardState;
 
 public abstract class Action {
 
-	private ArrayList<Action> m_sideEffects;
+	private List<Action> m_sideEffects;
 	
 	protected Action() {
 		m_sideEffects = new ArrayList<Action>();
 	}
 	
-	public Action(ArrayList<Action> sideEffects) {
+	public Action(List<Action> sideEffects) {
 		m_sideEffects = sideEffects;
 	}
 	
-	public ArrayList<Action> getSideEffects() {
+	public List<Action> getSideEffects() {
 		return m_sideEffects;
 	}
 	
